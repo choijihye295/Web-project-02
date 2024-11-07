@@ -90,24 +90,7 @@ const validateEmail = () => {
   }
 }
 
-// 비밀번호 확인 로직을 위한 TMDB API 호출?????
-//왜 여기서 TMDB를 써야하는지 모르겠음.
-const verifyPassword = async (inputPassword) => {
-  try {
-    const response = await axios.get(`https://api.themoviedb.org/3/authentication/token/new`, {
-      params: {
-        api_key: TMDB_API_KEY,
-      }
-    })
-
-    const token = response.data.request_token
-    return inputPassword === token
-  } catch (error) {
-    console.error('Password verification failed:', error)
-    return false
-  }
-}
-
+// 회원가입 함수
 const handleRegister = async () => {
   try {
     validateEmail()
@@ -123,9 +106,8 @@ const handleRegister = async () => {
       return
     }
 
-    // Local Storage에 저장
-    localStorage.setItem('registerEmail', registerEmail.value)
-    localStorage.setItem('registerPassword', registerPassword.value) // 비밀번호 저장
+    // 회원가입된 이메일을 Local Storage에 저장
+    localStorage.setItem('registeredEmail', registerEmail.value)
 
     alert('Registration successful')
     toggleCard() // 회원가입 성공 시 로그인 화면으로 전환
@@ -134,22 +116,23 @@ const handleRegister = async () => {
   }
 }
 
+// 로그인 함수
 const handleLogin = async () => {
   try {
     validateEmail()
     if (emailError.value) return
 
-    // 로컬 저장소의 비밀번호와 입력된 비밀번호를 비교
-    const storedPassword = localStorage.getItem('registerPassword')
-    if (password.value !== storedPassword) {
-      alert('Login failed: Invalid password')
+    const registeredEmail = localStorage.getItem('registeredEmail')
+
+    // 이메일이 등록된 이메일인지 확인하고, 비밀번호가 TMDB API 키와 일치하는지 확인
+    if (email.value !== registeredEmail || password.value !== TMDB_API_KEY) {
+      alert('Login failed: Invalid email or password')
       return
     }
 
-    // Remember me 선택 시 Local Storage에 저장
+    // Remember me 선택 시 이메일을 Local Storage에 저장
     if (rememberMe.value) {
       localStorage.setItem('email', email.value)
-      localStorage.setItem('password', password.value)
     }
 
     alert('Login successful')
