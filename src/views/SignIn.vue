@@ -157,7 +157,7 @@ const handleLogin = async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('https://images.unsplash.com/photo-1507041957456-9c397ce39c97?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+  background-image: url('https://images.unsplash.com/photo-1537420327992-d6e192287183?q=80&w=1288&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
   background-size: cover;
   background-position: center;
 }
@@ -212,12 +212,14 @@ const handleLogin = async () => {
   padding: 30px 40px;
   background-color: #ffffff;
   border-radius: 15px;
-  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2),
+              0px 0px 30px rgba(32, 105, 255, 1); /* 후광 효과 */
   position: absolute;
   top: 0;
   left: 0;
   backface-visibility: hidden;
   transform-style: preserve-3d;
+
 }
 
 .front {
