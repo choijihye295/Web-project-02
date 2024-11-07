@@ -19,11 +19,13 @@
             <input type="checkbox" id="remember" v-model="rememberMe" />
             <label for="remember">Remember me</label>
           </div>
-          <a href="#" class="forgot">Forgot Password?</a>
+          <a href="#" class="forgot" @click.prevent>Forgot Password?</a>
           <button @click="handleLogin" :disabled="!isLoginFormValid">Login</button>
           <div class="account-check">
-            Don't have an account? <a href="#" class="forgot" @click.prevent>Forgot Password?</a>
+            Don't have an account? <a href="#" @click.prevent="toggleCard">Sign up</a>
           </div>
+
+
         </div>
 
         <!-- 회원가입 카드 -->
