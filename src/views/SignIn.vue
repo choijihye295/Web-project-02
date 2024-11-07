@@ -318,7 +318,8 @@ button:hover {
   color: #666;
   font-weight: 600;
   float: right;
-  margin-top: -20px;
+  margin-top: -45px;
+  margin-bottom: 15px;
 }
 
 .error {
