@@ -2,14 +2,15 @@
   <div class="bg-image"></div>
   <div class="container">
     <div id="phone">
+      <!-- 로그인 카드 -->
       <div :class="['card', { hidden: !isLoginVisible }]" id="login">
         <h1>Sign in</h1>
         <div class="input">
-          <input id="email" type="email" v-model="email" placeholder=" " @focus="focusInput('email')" @blur="blurInput('email')" />
+          <input id="email" type="email" v-model="email" placeholder=" " />
           <label for="email">Username or Email</label>
         </div>
         <div class="input">
-          <input id="password" type="password" v-model="password" placeholder=" " @focus="focusInput('password')" @blur="blurInput('password')" />
+          <input id="password" type="password" v-model="password" placeholder=" " />
           <label for="password">Password</label>
         </div>
         <div class="checkbox">
@@ -23,18 +24,19 @@
         </div>
       </div>
 
+      <!-- 회원가입 카드 -->
       <div :class="['card', { hidden: isLoginVisible }]" id="register">
         <h1>Sign up</h1>
         <div class="input">
-          <input id="register-email" type="email" v-model="registerEmail" placeholder=" " @focus="focusInput('registerEmail')" @blur="blurInput('registerEmail')" />
+          <input id="register-email" type="email" v-model="registerEmail" placeholder=" " />
           <label for="register-email">Email</label>
         </div>
         <div class="input">
-          <input id="register-password" type="password" v-model="registerPassword" placeholder=" " @focus="focusInput('registerPassword')" @blur="blurInput('registerPassword')" />
+          <input id="register-password" type="password" v-model="registerPassword" placeholder=" " />
           <label for="register-password">Password</label>
         </div>
         <div class="input">
-          <input id="confirm-password" type="password" v-model="confirmPassword" placeholder=" " @focus="focusInput('confirmPassword')" @blur="blurInput('confirmPassword')" />
+          <input id="confirm-password" type="password" v-model="confirmPassword" placeholder=" " />
           <label for="confirm-password">Confirm Password</label>
         </div>
         <div class="checkbox">
@@ -51,9 +53,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-// import AuthService from '@/services/AuthService'  // AuthService를 사용하는 경우 추가
 
 const router = useRouter()
 
@@ -65,57 +66,16 @@ const registerPassword = ref('')
 const confirmPassword = ref('')
 const rememberMe = ref(false)
 const acceptTerms = ref(false)
-const isEmailFocused = ref(false)
-const isPasswordFocused = ref(false)
-const isRegisterEmailFocused = ref(false)
-const isRegisterPasswordFocused = ref(false)
-const isConfirmPasswordFocused = ref(false)
 
-// 유효성 검사를 위한 computed
 const isLoginFormValid = computed(() => !!email.value && !!password.value)
 const isRegisterFormValid = computed(() => !!registerEmail.value && !!registerPassword.value && !!confirmPassword.value && registerPassword.value === confirmPassword.value && acceptTerms.value)
 
-// 컴포넌트가 마운트될 때 실행할 로직
-onMounted(() => {
-  // 필요한 초기화 로직을 추가할 수 있습니다
-})
-
-// 컴포넌트가 언마운트될 때 실행할 로직
-onBeforeUnmount(() => {
-  // 필요한 정리 로직을 추가할 수 있습니다
-})
-
 const toggleCard = () => {
   isLoginVisible.value = !isLoginVisible.value
-  setTimeout(() => {
-    document.getElementById('register')?.classList.toggle('register-swap')
-    document.getElementById('login')?.classList.toggle('login-swap')
-  }, 50)
-}
-
-const focusInput = (inputName: string) => {
-  switch(inputName) {
-    case 'email': isEmailFocused.value = true; break
-    case 'password': isPasswordFocused.value = true; break
-    case 'registerEmail': isRegisterEmailFocused.value = true; break
-    case 'registerPassword': isRegisterPasswordFocused.value = true; break
-    case 'confirmPassword': isConfirmPasswordFocused.value = true; break
-  }
-}
-
-const blurInput = (inputName: string) => {
-  switch(inputName) {
-    case 'email': isEmailFocused.value = false; break
-    case 'password': isPasswordFocused.value = false; break
-    case 'registerEmail': isRegisterEmailFocused.value = false; break
-    case 'registerPassword': isRegisterPasswordFocused.value = false; break
-    case 'confirmPassword': isConfirmPasswordFocused.value = false; break
-  }
 }
 
 const handleLogin = async () => {
   try {
-    // await AuthService.tryLogin(email.value, password.value) // AuthService 사용 시
     alert('Login successful')
     router.push('/') // 로그인 후 홈으로 이동
   } catch (error) {
@@ -125,7 +85,6 @@ const handleLogin = async () => {
 
 const handleRegister = async () => {
   try {
-    // await AuthService.tryRegister(registerEmail.value, registerPassword.value) // AuthService 사용 시
     alert('Registration successful')
     toggleCard()
   } catch (error) {
@@ -134,14 +93,8 @@ const handleRegister = async () => {
 }
 </script>
 
-
-
 <style scoped>
 :root {
-  --container-start-x: -50%;
-  --container-end-x: -90%;
-  --container-start-y: -58%;
-  --container-end-y: -42%;
   --container-start-color: #ECECEC;
   --container-end-color: #100f0f;
 }
@@ -167,8 +120,6 @@ const handleRegister = async () => {
   background-color: rgba(27, 27, 27, 0.90);
 }
 
-
-
 .container {
   height: 100vh;
   width: 100vw;
@@ -182,62 +133,31 @@ const handleRegister = async () => {
 }
 
 #phone {
-  width: 50vw;
-  max-width: 80vh;
-  max-height: 50vh;
-  aspect-ratio: 3.35 / 4;
-  border-radius: min(2.5vw, 2.0vh);
+  width: 400px;
+  max-width: 90vw;
+  border-radius: 15px;
   text-align: center;
-  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-@media (max-height: 600px) {
-  #phone {
-    transform: translate(-50%, -50%) scale(0.5);
-  }
-}
-
-@media (max-height: 400px) {
-  #phone {
-    transform: translate(-50%, -50%) scale(0.3);
-  }
-}
-
-#content-wrapper {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
   position: relative;
+  box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.5);
 }
 
-input {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #000;
-  background-color: transparent;
-  border: none;
-  outline: none;
+.card {
   width: 100%;
-  height: 2.5rem;
-  padding: 0;
-  margin: 0;
+  padding: 30px 40px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1;
 }
 
-.read-text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-indent: 10px;
-  color: #2b2b2b !important;
-  font-weight: 900;
+.card.hidden {
+  opacity: 0;
+  transform: scale(0.9);
+  pointer-events: none;
 }
 
 h1 {
@@ -255,229 +175,70 @@ button {
   width: 100%;
   background-color: #2069ff;
   color: #fff;
-  padding: 17px;
+  padding: 15px;
   text-transform: uppercase;
   letter-spacing: 2px;
   box-shadow: 0px 10px 30px rgba(23, 83, 209, 0.3);
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 button:hover {
   box-shadow: 0px 2px 10px rgba(23, 83, 209, 0.4);
 }
 
-.input {
-  position: relative;
-  margin-top: 1.5rem;
+.account-check {
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: #666;
 }
 
-.line-active {
-  border-bottom: 1px solid #2069ff !important;
-  box-shadow: 0px 1px 0px #2069ff !important;
+.account-check a {
+  color: #2069ff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.input {
+  position: relative;
+  margin-top: 20px;
 }
 
 .input input {
   background-color: transparent;
   border: none;
   border-bottom: 1px solid #9e9e9e;
-  border-radius: 0;
-  outline: none;
-  height: 2.5rem;
   width: 100%;
   font-size: 1rem;
-  padding: 0;
-  box-shadow: none;
-  box-sizing: content-box;
-  transition: all 0.3s ease;
+  padding: 10px 0;
+  outline: none;
 }
 
 .input label {
   color: #9e9e9e;
+  font-size: 0.9rem;
   position: absolute;
-  top: 0;
+  top: 12px;
   left: 0;
-  height: 100%;
-  font-size: 1rem;
-  cursor: text;
-  transition: transform 0.2s ease-out;
-  transform-origin: 0% 100%;
-  text-align: initial;
-  transform: translateY(12px);
-  pointer-events: none;
-}
-
-.label-active {
-  transform: translateY(-14px) scale(0.8) !important;
-  transform-origin: 0 0 !important;
-}
-
-.label-blue {
-  color: #2069ff !important;
-}
-
-[type="checkbox"]:not(:checked),
-[type="checkbox"]:checked {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-[type="checkbox"] + label {
-  position: relative;
-  padding-left: 25px;
-  cursor: pointer;
-  display: inline-block;
-  height: 25px;
-  line-height: 22px;
-  font-size: 1rem;
-  user-select: none;
-}
-
-[type="checkbox"] + label:before,
-[type="checkbox"]:not(.filled-in) + label:after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 18px;
-  height: 18px;
-  z-index: 0;
-  border: 2px solid #5a5a5a;
-  border-radius: 3px;
-  margin-top: 2px;
-  transition: 0.2s;
-}
-
-[type="checkbox"]:checked + label:before {
-  top: -4px;
-  left: -5px;
-  width: 12px;
-  height: 22px;
-  border-top: 2px solid transparent;
-  border-left: 2px solid transparent;
-  border-right: 2px solid #2069ff;
-  border-bottom: 2px solid #2069ff;
-  transform: rotate(40deg);
-  backface-visibility: hidden;
-  transform-origin: 100% 100%;
-  border-radius: 1px;
-}
-
-.checkbox {
-  margin-top: 2rem;
-  display: block;
-  margin-bottom: 2rem;
-}
-
-.remember {
-  float: left;
-}
-
-.forgot {
-  float: right;
-}
-
-.forgot a {
-  text-decoration: none;
-  color: #000;
-  font-weight: 900;
-  line-height: 22px;
-}
-
-.card {
-  border-radius: 10px;
-  width: 100%;
-  max-width: 800px;
-  position: absolute;
-  background-color: white;
-  padding: 27px 30px 46px 30px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.16);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.card.hidden {
-  opacity: 0;
-  transform: scale(0.8);
-  pointer-events: none;
-}
-
-#login {
-  z-index: 2;
-  top: 5vh;
-}
-
-#register {
-  z-index: 2;
-  top: 5vh;
-}
-
-.account-check {
-  width: 100%;
-  text-align: center;
-  position: absolute;
-  bottom: 15px;
-  left: 0;
-  opacity: 0;
-  text-decoration: none;
-  visibility: hidden;
-  color: #fff;
-  padding: 10px;
-  transition: all 0.2s ease;
-}
-
-.account-check:active {
-  color: #000;
-  transform: translateY(2px);
-}
-
-.hidden form {
-  opacity: 0;
   transition: all 0.3s ease;
 }
 
-.hidden .account-check {
-  opacity: 1;
-  visibility: visible;
-  z-index: 2;
-  transition: all 0.2s ease;
+.input input:focus + label,
+.input input:not(:placeholder-shown) + label {
+  top: -10px;
+  font-size: 0.75rem;
+  color: #2069ff;
 }
 
-.register-swap {
-  animation: register-swap 0.5s ease forwards;
+.checkbox {
+  margin-top: 15px;
+  font-size: 0.85rem;
+  color: #666;
+  display: flex;
+  align-items: center;
 }
 
-.login-swap {
-  animation: login-swap 0.5s ease forwards;
-}
-
-.active > label {
-  color: rgba(0, 0, 0, 0);
-}
-
-@keyframes register-swap {
-  0% {transform: translate(0%, 0%)}
-  50% {transform: translate(30%, 0%)}
-  100% {transform: translate(0%, 0%)}
-}
-
-@keyframes login-swap {
-  0% {transform: translate(0%, 0%)}
-  50% {transform: translate(-70%, 0%)}
-  100% {transform: translate(0%, 0%)}
-}
-
-@media (max-width: 768px) {
-  #phone {
-    width: 70%;
-    transform: translate(-50%, -70%) scale(1);
-  }
-  #login, #register {
-    top: -2vh !important;
-  }
+.checkbox input {
+  margin-right: 10px;
 }
 </style>
-
-
