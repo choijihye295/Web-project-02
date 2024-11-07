@@ -1,146 +1,139 @@
+<template>
+  <div class="bg-image"></div>
+  <div class="container">
+    <div id="phone">
+      <div :class="['card', { hidden: !isLoginVisible }]" id="login">
+        <h1>Sign in</h1>
+        <div class="input">
+          <input id="email" type="email" v-model="email" placeholder=" " @focus="focusInput('email')" @blur="blurInput('email')" />
+          <label for="email">Username or Email</label>
+        </div>
+        <div class="input">
+          <input id="password" type="password" v-model="password" placeholder=" " @focus="focusInput('password')" @blur="blurInput('password')" />
+          <label for="password">Password</label>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="remember" v-model="rememberMe" />
+          <label for="remember">Remember me</label>
+        </div>
+        <a href="#" class="forgot">Forgot Password?</a>
+        <button @click="handleLogin" :disabled="!isLoginFormValid">Login</button>
+        <div class="account-check">
+          Don't have an account? <a href="#" @click.prevent="toggleCard">Sign up</a>
+        </div>
+      </div>
+
+      <div :class="['card', { hidden: isLoginVisible }]" id="register">
+        <h1>Sign up</h1>
+        <div class="input">
+          <input id="register-email" type="email" v-model="registerEmail" placeholder=" " @focus="focusInput('registerEmail')" @blur="blurInput('registerEmail')" />
+          <label for="register-email">Email</label>
+        </div>
+        <div class="input">
+          <input id="register-password" type="password" v-model="registerPassword" placeholder=" " @focus="focusInput('registerPassword')" @blur="blurInput('registerPassword')" />
+          <label for="register-password">Password</label>
+        </div>
+        <div class="input">
+          <input id="confirm-password" type="password" v-model="confirmPassword" placeholder=" " @focus="focusInput('confirmPassword')" @blur="blurInput('confirmPassword')" />
+          <label for="confirm-password">Confirm Password</label>
+        </div>
+        <div class="checkbox">
+          <input type="checkbox" id="terms" v-model="acceptTerms" />
+          <label for="terms">I have read <b>Terms and Conditions</b></label>
+        </div>
+        <button @click="handleRegister" :disabled="!isRegisterFormValid">Register</button>
+        <div class="account-check">
+          Already have an account? <a href="#" @click.prevent="toggleCard">Sign in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { useRouter } from 'vue-router'
+// import AuthService from '@/services/AuthService'  // AuthService를 사용하는 경우 추가
+
+const router = useRouter()
 
 const isLoginVisible = ref(true)
 const email = ref('')
 const password = ref('')
-const rememberMe = ref(false)
 const registerEmail = ref('')
 const registerPassword = ref('')
 const confirmPassword = ref('')
+const rememberMe = ref(false)
 const acceptTerms = ref(false)
-
 const isEmailFocused = ref(false)
 const isPasswordFocused = ref(false)
 const isRegisterEmailFocused = ref(false)
 const isRegisterPasswordFocused = ref(false)
 const isConfirmPasswordFocused = ref(false)
 
+// 유효성 검사를 위한 computed
+const isLoginFormValid = computed(() => !!email.value && !!password.value)
+const isRegisterFormValid = computed(() => !!registerEmail.value && !!registerPassword.value && !!confirmPassword.value && registerPassword.value === confirmPassword.value && acceptTerms.value)
+
+// 컴포넌트가 마운트될 때 실행할 로직
+onMounted(() => {
+  // 필요한 초기화 로직을 추가할 수 있습니다
+})
+
+// 컴포넌트가 언마운트될 때 실행할 로직
+onBeforeUnmount(() => {
+  // 필요한 정리 로직을 추가할 수 있습니다
+})
+
 const toggleCard = () => {
   isLoginVisible.value = !isLoginVisible.value
+  setTimeout(() => {
+    document.getElementById('register')?.classList.toggle('register-swap')
+    document.getElementById('login')?.classList.toggle('login-swap')
+  }, 50)
 }
 
-const handleLogin = () => {
-  // 로그인 처리 로직 추가
-  alert('로그인 시도')
+const focusInput = (inputName: string) => {
+  switch(inputName) {
+    case 'email': isEmailFocused.value = true; break
+    case 'password': isPasswordFocused.value = true; break
+    case 'registerEmail': isRegisterEmailFocused.value = true; break
+    case 'registerPassword': isRegisterPasswordFocused.value = true; break
+    case 'confirmPassword': isConfirmPasswordFocused.value = true; break
+  }
 }
 
-const handleRegister = () => {
-  // 회원가입 처리 로직 추가
-  alert('회원가입 시도')
+const blurInput = (inputName: string) => {
+  switch(inputName) {
+    case 'email': isEmailFocused.value = false; break
+    case 'password': isPasswordFocused.value = false; break
+    case 'registerEmail': isRegisterEmailFocused.value = false; break
+    case 'registerPassword': isRegisterPasswordFocused.value = false; break
+    case 'confirmPassword': isConfirmPasswordFocused.value = false; break
+  }
 }
 
-const focusInput = (inputName) => {
-  if (inputName === 'email') isEmailFocused.value = true
-  else if (inputName === 'password') isPasswordFocused.value = true
-  else if (inputName === 'registerEmail') isRegisterEmailFocused.value = true
-  else if (inputName === 'registerPassword') isRegisterPasswordFocused.value = true
-  else if (inputName === 'confirmPassword') isConfirmPasswordFocused.value = true
+const handleLogin = async () => {
+  try {
+    // await AuthService.tryLogin(email.value, password.value) // AuthService 사용 시
+    alert('Login successful')
+    router.push('/') // 로그인 후 홈으로 이동
+  } catch (error) {
+    alert('Login failed')
+  }
 }
 
-const blurInput = (inputName) => {
-  if (inputName === 'email') isEmailFocused.value = false
-  else if (inputName === 'password') isPasswordFocused.value = false
-  else if (inputName === 'registerEmail') isRegisterEmailFocused.value = false
-  else if (inputName === 'registerPassword') isRegisterPasswordFocused.value = false
-  else if (inputName === 'confirmPassword') isConfirmPasswordFocused.value = false
+const handleRegister = async () => {
+  try {
+    // await AuthService.tryRegister(registerEmail.value, registerPassword.value) // AuthService 사용 시
+    alert('Registration successful')
+    toggleCard()
+  } catch (error) {
+    alert('Registration failed')
+  }
 }
-
-const isLoginFormValid = computed(() => email.value && password.value)
-const isRegisterFormValid = computed(() => registerEmail.value && registerPassword.value && confirmPassword.value && acceptTerms.value)
 </script>
 
-<template>
-  <div>
-    <div class="bg-image"></div>
-    <div class="container">
-      <div id="phone">
-        <div id="content-wrapper">
-          <div :class="['card', { hidden: !isLoginVisible }]" id="login">
-            <form @submit.prevent="handleLogin">
-              <h1>Sign in</h1>
-              <div class="input" :class="{ active: isEmailFocused || email }">
-                <input
-                    id="email"
-                    type="email"
-                    v-model="email"
-                    @focus="focusInput('email')"
-                    @blur="blurInput('email')"
-                />
-                <label for="email">Username or Email</label>
-              </div>
-              <div class="input" :class="{ active: isPasswordFocused || password }">
-                <input
-                    id="password"
-                    type="password"
-                    v-model="password"
-                    @focus="focusInput('password')"
-                    @blur="blurInput('password')"
-                />
-                <label for="password">Password</label>
-              </div>
-              <span class="checkbox remember">
-                <input type="checkbox" id="remember" v-model="rememberMe" />
-                <label for="remember" class="read-text">Remember me</label>
-              </span>
-              <span class="checkbox forgot">
-                <a href="#">Forgot Password?</a>
-              </span>
-              <button :disabled="!isLoginFormValid">Login</button>
-            </form>
-            <a href="javascript:void(0)" class="account-check" @click="toggleCard">
-              Already have an account? <b>Sign in</b>
-            </a>
-          </div>
-
-          <div :class="['card', { hidden: isLoginVisible }]" id="register">
-            <form @submit.prevent="handleRegister">
-              <h1>Sign up</h1>
-              <div class="input" :class="{ active: isRegisterEmailFocused || registerEmail }">
-                <input
-                    id="register-email"
-                    type="email"
-                    v-model="registerEmail"
-                    @focus="focusInput('registerEmail')"
-                    @blur="blurInput('registerEmail')"
-                />
-                <label for="register-email">Email</label>
-              </div>
-              <div class="input" :class="{ active: isRegisterPasswordFocused || registerPassword }">
-                <input
-                    id="register-password"
-                    type="password"
-                    v-model="registerPassword"
-                    @focus="focusInput('registerPassword')"
-                    @blur="blurInput('registerPassword')"
-                />
-                <label for="register-password">Password</label>
-              </div>
-              <div class="input" :class="{ active: isConfirmPasswordFocused || confirmPassword }">
-                <input
-                    id="confirm-password"
-                    type="password"
-                    v-model="confirmPassword"
-                    @focus="focusInput('confirmPassword')"
-                    @blur="blurInput('confirmPassword')"
-                />
-                <label for="confirm-password">Confirm Password</label>
-              </div>
-              <span class="checkbox remember">
-                <input type="checkbox" id="terms" v-model="acceptTerms" />
-                <label for="terms" class="read-text">I have read <b>Terms and Conditions</b></label>
-              </span>
-              <button :disabled="!isRegisterFormValid">Register</button>
-            </form>
-            <a href="javascript:void(0)" id="gotologin" class="account-check" @click="toggleCard">
-              Don't have an account? <b>Sign up</b>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
 
 
 <style scoped>
@@ -174,11 +167,7 @@ const isRegisterFormValid = computed(() => registerEmail.value && registerPasswo
   background-color: rgba(27, 27, 27, 0.90);
 }
 
-a {
-  text-decoration: none;
-  margin: 0;
-  padding: 0;
-}
+
 
 .container {
   height: 100vh;
@@ -403,16 +392,16 @@ button:hover {
   background-color: white;
   padding: 27px 30px 46px 30px;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.16);
-  transition: all 0.4s 0.1s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
   top: 50%;
   left: 50%;
-  transform: translate(-50%);
+  transform: translate(-50%, -50%);
 }
 
 .card.hidden {
-  background-color: #2069ff;
-  box-shadow: 0px 20px 40px rgba(23, 83, 209, 0.8);
-  padding: 0px 30px 0px 30px;
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
 }
 
 #login {
