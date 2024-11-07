@@ -1,4 +1,4 @@
-# project-02
+# project-02 : 웹서비스 설계 과제 02
 
 ## Project setup
 ```
