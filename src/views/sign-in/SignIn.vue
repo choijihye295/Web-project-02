@@ -22,7 +22,7 @@
           <a href="#" class="forgot">Forgot Password?</a>
           <button @click="handleLogin" :disabled="!isLoginFormValid">Login</button>
           <div class="account-check">
-            Don't have an account? <a href="#" @click.prevent="toggleCard">Sign up</a>
+            Don't have an account? <a href="#" class="forgot" @click.prevent>Forgot Password?</a>
           </div>
         </div>
 
@@ -251,6 +251,7 @@ button:hover {
 
 .checkbox {
   margin-top: 15px;
+  margin-bottom: 30px; /* 간격을 넓히기 위해 추가 */
   font-size: 0.85rem;
   color: #666;
   display: flex;
@@ -260,4 +261,20 @@ button:hover {
 .checkbox input {
   margin-right: 10px;
 }
+
+.forgot {
+  font-size: 0.85rem; /* 다른 텍스트와 동일한 폰트 크기 */
+  color: #666; /* 다른 텍스트와 동일한 색상 */
+  font-weight: 600; /* 동일한 폰트 두께 */
+  float: right; /* 오른쪽 정렬 */
+  margin-top: -20px; /* `Remember me`와 같은 선상에 오도록 조정 */
+}
+
+.forgot a {
+  color: #2069ff;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 </style>
