@@ -59,7 +59,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 
-const TMDB_API_KEY = 'YOUR_TMDB_API_KEY' // 여기에 발급받은 TMDB API 키를 입력하세요
+const TMDB_API_KEY = '9120c69690b70e5434ad9e7895d8717a' // 여기에 발급받은 TMDB API 키를 입력하세요
 
 const router = useRouter()
 
@@ -90,7 +90,8 @@ const validateEmail = () => {
   }
 }
 
-// 비밀번호 확인 로직을 위한 TMDB API 호출
+// 비밀번호 확인 로직을 위한 TMDB API 호출?????
+//왜 여기서 TMDB를 써야하는지 모르겠음.
 const verifyPassword = async (inputPassword) => {
   try {
     const response = await axios.get(`https://api.themoviedb.org/3/authentication/token/new`, {
@@ -104,30 +105,6 @@ const verifyPassword = async (inputPassword) => {
   } catch (error) {
     console.error('Password verification failed:', error)
     return false
-  }
-}
-
-const handleLogin = async () => {
-  try {
-    validateEmail()
-    if (emailError.value) return
-
-    const isValidPassword = await verifyPassword(password.value)
-    if (!isValidPassword) {
-      alert('Login failed: Invalid password')
-      return
-    }
-
-    if (rememberMe.value) {
-      localStorage.setItem('email', email.value)
-      localStorage.setItem('password', password.value)
-    }
-
-    alert('Login successful')
-    router.push('/') // 로그인 후 홈으로 이동
-  } catch (error) {
-    console.error('Login error:', error)
-    alert('Login failed')
   }
 }
 
@@ -146,8 +123,9 @@ const handleRegister = async () => {
       return
     }
 
+    // Local Storage에 저장
     localStorage.setItem('registerEmail', registerEmail.value)
-    localStorage.setItem('registerPassword', registerPassword.value)
+    localStorage.setItem('registerPassword', registerPassword.value) // 비밀번호 저장
 
     alert('Registration successful')
     toggleCard() // 회원가입 성공 시 로그인 화면으로 전환
@@ -155,6 +133,33 @@ const handleRegister = async () => {
     alert('Registration failed')
   }
 }
+
+const handleLogin = async () => {
+  try {
+    validateEmail()
+    if (emailError.value) return
+
+    // 로컬 저장소의 비밀번호와 입력된 비밀번호를 비교
+    const storedPassword = localStorage.getItem('registerPassword')
+    if (password.value !== storedPassword) {
+      alert('Login failed: Invalid password')
+      return
+    }
+
+    // Remember me 선택 시 Local Storage에 저장
+    if (rememberMe.value) {
+      localStorage.setItem('email', email.value)
+      localStorage.setItem('password', password.value)
+    }
+
+    alert('Login successful')
+    router.push('/') // 로그인 후 홈으로 이동
+  } catch (error) {
+    console.error('Login error:', error)
+    alert('Login failed')
+  }
+}
+
 </script>
 
 <style scoped>

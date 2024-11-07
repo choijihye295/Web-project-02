@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import SignIn from '../views/sign-in/SignIn.vue' // SignIn.vue 파일을 불러옵니다
+import SignIn from '../views/SignIn.vue' // SignIn.vue 파일을 불러옵니다
 
 const routes: Array<RouteRecordRaw> = [
   {
