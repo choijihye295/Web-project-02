@@ -140,6 +140,10 @@ const handleRegister = async () => {
   max-width: 90vw;
   perspective: 1000px;
   text-align: center;
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* 중앙에 정렬 */
 }
 
 .card-container {
