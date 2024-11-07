@@ -14,8 +14,8 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
   },
   {
-    path: '/sign-in', // 로그인 페이지 경로 추가
-    name: 'sign-in',
+    path: '/signin', // 이 부분을 /sign-in에서 /signin으로 수정
+    name: 'Signin',
     component: SignIn
   }
 ]

@@ -2,14 +2,13 @@
   <div class="bg-image"></div>
   <div class="container">
     <div id="phone">
-      <!-- 카드 컨테이너에 3D 전환을 위한 클래스 추가 -->
       <div class="card-container" :class="{ flipped: !isLoginVisible }">
-        <!-- 로그인 카드 -->
         <div class="card front" id="login">
           <h1>Sign in</h1>
           <div class="input">
-            <input id="email" type="email" v-model="email" placeholder=" " />
+            <input id="email" type="email" v-model="email" @blur="validateEmail" placeholder=" " />
             <label for="email">Username or Email</label>
+            <span v-if="emailError" class="error">{{ emailError }}</span>
           </div>
           <div class="input">
             <input id="password" type="password" v-model="password" placeholder=" " />
@@ -24,16 +23,14 @@
           <div class="account-check">
             Don't have an account? <a href="#" @click.prevent="toggleCard">Sign up</a>
           </div>
-
-
         </div>
 
-        <!-- 회원가입 카드 -->
         <div class="card back" id="register">
           <h1>Sign up</h1>
           <div class="input">
-            <input id="register-email" type="email" v-model="registerEmail" placeholder=" " />
+            <input id="register-email" type="email" v-model="registerEmail" @blur="validateEmail" placeholder=" " />
             <label for="register-email">Email</label>
+            <span v-if="emailError" class="error">{{ emailError }}</span>
           </div>
           <div class="input">
             <input id="register-password" type="password" v-model="registerPassword" placeholder=" " />
@@ -71,6 +68,7 @@ const registerPassword = ref('')
 const confirmPassword = ref('')
 const rememberMe = ref(false)
 const acceptTerms = ref(false)
+const emailError = ref('')
 
 const isLoginFormValid = computed(() => !!email.value && !!password.value)
 const isRegisterFormValid = computed(() => !!registerEmail.value && !!registerPassword.value && !!confirmPassword.value && registerPassword.value === confirmPassword.value && acceptTerms.value)
@@ -79,8 +77,26 @@ const toggleCard = () => {
   isLoginVisible.value = !isLoginVisible.value
 }
 
+const validateEmail = () => {
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
+  if (isLoginVisible.value) {
+    emailError.value = emailPattern.test(email.value) ? '' : 'Please enter a valid email address'
+  } else {
+    emailError.value = emailPattern.test(registerEmail.value) ? '' : 'Please enter a valid email address'
+  }
+}
+
 const handleLogin = async () => {
   try {
+    validateEmail()
+    if (emailError.value) return
+
+    if (rememberMe.value) {
+      localStorage.setItem('email', email.value)
+      localStorage.setItem('password', password.value)
+    }
+
     alert('Login successful')
     router.push('/') // 로그인 후 홈으로 이동
   } catch (error) {
@@ -90,13 +106,30 @@ const handleLogin = async () => {
 
 const handleRegister = async () => {
   try {
+    validateEmail()
+    if (emailError.value) return
+
+    if (registerPassword.value !== confirmPassword.value) {
+      alert('Passwords do not match')
+      return
+    }
+
+    if (!acceptTerms.value) {
+      alert('You must accept the terms and conditions')
+      return
+    }
+
+    localStorage.setItem('registerEmail', registerEmail.value)
+    localStorage.setItem('registerPassword', registerPassword.value)
+
     alert('Registration successful')
-    toggleCard()
+    toggleCard() // 회원가입 성공 시 로그인 화면으로 전환
   } catch (error) {
     alert('Registration failed')
   }
 }
 </script>
+
 
 <style scoped>
 :root {
@@ -145,7 +178,7 @@ const handleRegister = async () => {
   position: absolute;
   top: 30%;
   left: 50%;
-  transform: translate(-50%, -50%); /* 중앙에 정렬 */
+  transform: translate(-50%, -50%);
 }
 
 .card-container {
@@ -253,7 +286,7 @@ button:hover {
 
 .checkbox {
   margin-top: 15px;
-  margin-bottom: 30px; /* 간격을 넓히기 위해 추가 */
+  margin-bottom: 30px;
   font-size: 0.85rem;
   color: #666;
   display: flex;
@@ -265,18 +298,17 @@ button:hover {
 }
 
 .forgot {
-  font-size: 0.85rem; /* 다른 텍스트와 동일한 폰트 크기 */
-  color: #666; /* 다른 텍스트와 동일한 색상 */
-  font-weight: 600; /* 동일한 폰트 두께 */
-  float: right; /* 오른쪽 정렬 */
-  margin-top: -20px; /* `Remember me`와 같은 선상에 오도록 조정 */
-}
-
-.forgot a {
-  color: #2069ff;
-  text-decoration: none;
+  font-size: 0.85rem;
+  color: #666;
   font-weight: 600;
-  cursor: pointer;
+  float: right;
+  margin-top: -20px;
 }
 
+.error {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  display: block;
+}
 </style>
