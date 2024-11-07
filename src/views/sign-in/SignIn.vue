@@ -57,6 +57,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from 'axios'
+
+const TMDB_API_KEY = 'YOUR_TMDB_API_KEY' // 여기에 발급받은 TMDB API 키를 입력하세요
 
 const router = useRouter()
 
@@ -87,10 +90,33 @@ const validateEmail = () => {
   }
 }
 
+// 비밀번호 확인 로직을 위한 TMDB API 호출
+const verifyPassword = async (inputPassword) => {
+  try {
+    const response = await axios.get(`https://api.themoviedb.org/3/authentication/token/new`, {
+      params: {
+        api_key: TMDB_API_KEY,
+      }
+    })
+
+    const token = response.data.request_token
+    return inputPassword === token
+  } catch (error) {
+    console.error('Password verification failed:', error)
+    return false
+  }
+}
+
 const handleLogin = async () => {
   try {
     validateEmail()
     if (emailError.value) return
+
+    const isValidPassword = await verifyPassword(password.value)
+    if (!isValidPassword) {
+      alert('Login failed: Invalid password')
+      return
+    }
 
     if (rememberMe.value) {
       localStorage.setItem('email', email.value)
@@ -100,6 +126,7 @@ const handleLogin = async () => {
     alert('Login successful')
     router.push('/') // 로그인 후 홈으로 이동
   } catch (error) {
+    console.error('Login error:', error)
     alert('Login failed')
   }
 }
@@ -129,7 +156,6 @@ const handleRegister = async () => {
   }
 }
 </script>
-
 
 <style scoped>
 :root {
