@@ -2,50 +2,53 @@
   <div class="bg-image"></div>
   <div class="container">
     <div id="phone">
-      <!-- 로그인 카드 -->
-      <div :class="['card', { hidden: !isLoginVisible }]" id="login">
-        <h1>Sign in</h1>
-        <div class="input">
-          <input id="email" type="email" v-model="email" placeholder=" " />
-          <label for="email">Username or Email</label>
+      <!-- 카드 컨테이너에 3D 전환을 위한 클래스 추가 -->
+      <div class="card-container" :class="{ flipped: !isLoginVisible }">
+        <!-- 로그인 카드 -->
+        <div class="card front" id="login">
+          <h1>Sign in</h1>
+          <div class="input">
+            <input id="email" type="email" v-model="email" placeholder=" " />
+            <label for="email">Username or Email</label>
+          </div>
+          <div class="input">
+            <input id="password" type="password" v-model="password" placeholder=" " />
+            <label for="password">Password</label>
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" id="remember" v-model="rememberMe" />
+            <label for="remember">Remember me</label>
+          </div>
+          <a href="#" class="forgot">Forgot Password?</a>
+          <button @click="handleLogin" :disabled="!isLoginFormValid">Login</button>
+          <div class="account-check">
+            Don't have an account? <a href="#" @click.prevent="toggleCard">Sign up</a>
+          </div>
         </div>
-        <div class="input">
-          <input id="password" type="password" v-model="password" placeholder=" " />
-          <label for="password">Password</label>
-        </div>
-        <div class="checkbox">
-          <input type="checkbox" id="remember" v-model="rememberMe" />
-          <label for="remember">Remember me</label>
-        </div>
-        <a href="#" class="forgot">Forgot Password?</a>
-        <button @click="handleLogin" :disabled="!isLoginFormValid">Login</button>
-        <div class="account-check">
-          Don't have an account? <a href="#" @click.prevent="toggleCard">Sign up</a>
-        </div>
-      </div>
 
-      <!-- 회원가입 카드 -->
-      <div :class="['card', { hidden: isLoginVisible }]" id="register">
-        <h1>Sign up</h1>
-        <div class="input">
-          <input id="register-email" type="email" v-model="registerEmail" placeholder=" " />
-          <label for="register-email">Email</label>
-        </div>
-        <div class="input">
-          <input id="register-password" type="password" v-model="registerPassword" placeholder=" " />
-          <label for="register-password">Password</label>
-        </div>
-        <div class="input">
-          <input id="confirm-password" type="password" v-model="confirmPassword" placeholder=" " />
-          <label for="confirm-password">Confirm Password</label>
-        </div>
-        <div class="checkbox">
-          <input type="checkbox" id="terms" v-model="acceptTerms" />
-          <label for="terms">I have read <b>Terms and Conditions</b></label>
-        </div>
-        <button @click="handleRegister" :disabled="!isRegisterFormValid">Register</button>
-        <div class="account-check">
-          Already have an account? <a href="#" @click.prevent="toggleCard">Sign in</a>
+        <!-- 회원가입 카드 -->
+        <div class="card back" id="register">
+          <h1>Sign up</h1>
+          <div class="input">
+            <input id="register-email" type="email" v-model="registerEmail" placeholder=" " />
+            <label for="register-email">Email</label>
+          </div>
+          <div class="input">
+            <input id="register-password" type="password" v-model="registerPassword" placeholder=" " />
+            <label for="register-password">Password</label>
+          </div>
+          <div class="input">
+            <input id="confirm-password" type="password" v-model="confirmPassword" placeholder=" " />
+            <label for="confirm-password">Confirm Password</label>
+          </div>
+          <div class="checkbox">
+            <input type="checkbox" id="terms" v-model="acceptTerms" />
+            <label for="terms">I have read <b>Terms and Conditions</b></label>
+          </div>
+          <button @click="handleRegister" :disabled="!isRegisterFormValid">Register</button>
+          <div class="account-check">
+            Already have an account? <a href="#" @click.prevent="toggleCard">Sign in</a>
+          </div>
         </div>
       </div>
     </div>
@@ -135,10 +138,20 @@ const handleRegister = async () => {
 #phone {
   width: 400px;
   max-width: 90vw;
-  border-radius: 15px;
+  perspective: 1000px;
   text-align: center;
+}
+
+.card-container {
+  width: 100%;
+  height: 100%;
   position: relative;
-  box-shadow: 0px 10px 40px rgba(0, 0, 0, 0.5);
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card-container.flipped {
+  transform: rotateY(180deg);
 }
 
 .card {
@@ -150,14 +163,16 @@ const handleRegister = async () => {
   position: absolute;
   top: 0;
   left: 0;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  z-index: 1;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
 }
 
-.card.hidden {
-  opacity: 0;
-  transform: scale(0.9);
-  pointer-events: none;
+.front {
+  z-index: 2;
+}
+
+.back {
+  transform: rotateY(180deg);
 }
 
 h1 {
