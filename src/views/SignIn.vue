@@ -55,11 +55,15 @@
 </template>
 
 <script setup lang="ts">
+
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+//import axios from 'axios'
 
-const TMDB_API_KEY = '9120c69690b70e5434ad9e7895d8717a' // 여기에 발급받은 TMDB API 키를 입력하세요
+const TMDB_API_KEY = process.env.VUE_APP_TMDB_API_KEY;
+console.log("TMDB_API_KEY:", TMDB_API_KEY); // 환경 변수 값 확인
+
+
 
 const router = useRouter()
 
