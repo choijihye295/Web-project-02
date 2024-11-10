@@ -126,30 +126,32 @@ body {
   top: 0;
   width: 100%;
   padding: 10px 20px;
-  background-color: #1a1a1a;
+  background-color: rgba(26, 26, 26, 0.8); /* 초기 투명도 */
   color: white;
   z-index: 1000;
+  transition: background-color 0.3s ease; /* 애니메이션 효과 */
 }
+.app-header.scrolled {
+  background-color: rgba(26, 26, 26, 0.3); /* 스크롤 시 더 연한 배경 */
+}
+
+.nav-links a {
+  text-decoration: none; /* 밑줄 제거 */
+  color: white; /* 링크 색상을 항상 흰색으로 유지 */
+  padding: 0 10px;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #e50914; /* 호버 시 빨간색으로 변경 */
+}
+
 
 .logo .icon {
   color: #E50914;
   font-size: 1.8rem;
 }
 
-.nav-links {
-  display: flex;
-  gap: 20px;
-}
-
-.nav-links span {
-  cursor: pointer;
-  color: #e5e5e5;
-  transition: color 0.3s;
-}
-
-.nav-links span:hover {
-  color: #ffffff;
-}
 
 .user-icon {
   color: white;
