@@ -265,6 +265,7 @@ body {
   border: none;
   color: white;
   cursor: pointer;
+  border-radius: 5px; /* 둥근 모서리를 위한 속성 추가 */
 }
 
 /* 영화 섹션 스타일 */
