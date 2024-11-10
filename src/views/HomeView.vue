@@ -3,18 +3,23 @@
     <!-- 헤더 섹션 -->
     <header class="app-header">
       <div class="logo">
-        <a @click="navigateToHome">
+        <router-link to="/">
           <font-awesome-icon icon="ticket-alt" class="icon" />
-        </a>
+        </router-link>
       </div>
       <nav class="nav-links">
-        <span>홈</span>
-        <span>대세 콘텐츠</span>
-        <span>찾아보기</span>
-        <span>내가 찜한 리스트</span>
+        <router-link to="/">홈</router-link>
+        <router-link to="/popular">대세 콘텐츠</router-link>
+        <router-link to="/search">찾아보기</router-link>
+        <router-link to="/wishlist">내가 찜한 리스트</router-link>
       </nav>
-      <div class="user-icon">
+      <div class="user-icon" @click="toggleDropdown">
         <font-awesome-icon icon="user" />
+      </div>
+      <!-- 간단한 드롭다운 메뉴 -->
+      <div v-if="isDropdownOpen" class="dropdown-menu">
+        <p>{{ userId }}</p>
+        <button @click="logout">로그아웃</button>
       </div>
     </header>
 
@@ -36,7 +41,6 @@
           <MovieCard v-for="movie in movies" :key="movie.id" :movie="movie" />
         </div>
       </section>
-
     </main>
   </div>
 </template>
@@ -54,6 +58,24 @@ const latestMovies = ref([])
 const actionMovies = ref([])
 
 const movieSections = ref({})
+const isDropdownOpen = ref(false)
+
+// 사용자 아이디를 로컬 저장소에서 가져오기
+// userId 값을 localStorage에서 불러올 때 registeredEmail 키를 사용
+const userId = localStorage.getItem("registeredEmail") || "Guest";
+
+
+// 드롭다운 토글 함수
+const toggleDropdown = () => {
+  isDropdownOpen.value = !isDropdownOpen.value
+}
+
+// 로그아웃 함수
+const logout = () => {
+  localStorage.removeItem('userId') // 로컬 저장소에서 사용자 아이디 삭제
+  userId.value = 'Guest' // 로그아웃 후 기본값으로 설정
+  isDropdownOpen.value = false // 드롭다운 닫기
+}
 
 const fetchMovies = async () => {
   try {
@@ -81,7 +103,6 @@ const fetchMovies = async () => {
 
 onMounted(fetchMovies)
 </script>
-
 
 <style scoped>
 /* 전체 페이지 배경과 마진을 없앰 */
@@ -137,6 +158,32 @@ body {
 
 .main-content {
   padding-top: 60px; /* 고정된 헤더의 높이만큼 여백 추가 */
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 60px;
+  right: 20px;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-menu p {
+  margin: 0;
+  font-weight: bold;
+}
+
+.dropdown-menu button {
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: #e50914;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 3px;
 }
 
 /* 배너 스타일 */
