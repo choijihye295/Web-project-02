@@ -36,6 +36,7 @@
           <MovieCard v-for="movie in movies" :key="movie.id" :movie="movie" />
         </div>
       </section>
+
     </main>
   </div>
 </template>
@@ -85,7 +86,7 @@ onMounted(fetchMovies)
 <style scoped>
 /* 전체 페이지 배경과 마진을 없앰 */
 * {
-  margin: 0;
+  margin: 1px;
   padding: 0;
   box-sizing: border-box;
 }
@@ -188,20 +189,37 @@ body {
 .movie-list {
   display: flex;
   gap: 20px;
-  overflow-x: scroll;
+  overflow-x: scroll; /* 가로 스크롤을 강제로 설정 */
+
   padding-bottom: 10px;
+  scroll-snap-type: x mandatory; /* 스크롤 스냅 기능 추가 */
+  overscroll-behavior-x: contain; /* 가로 스크롤 중 세로 스크롤 간섭 방지 */
+}
+
+.movie-card {
+  min-width: 180px; /* 카드의 최소 너비를 고정 */
+  max-width: 180px; /* 카드의 최대 너비를 고정 */
+  height: 400px;
+  background-color: #444;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
 }
 
 .movie-list::-webkit-scrollbar {
-  height: 8px;
+  height: 8px; /* 스크롤바 높이를 조정 */
 }
 
 .movie-list::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.3); /* 스크롤바 색상 */
   border-radius: 4px;
 }
 
 .movie-list::-webkit-scrollbar-track {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.1); /* 스크롤 트랙 색상 */
 }
+
 </style>

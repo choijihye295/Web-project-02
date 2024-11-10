@@ -1,17 +1,9 @@
 <template>
-  <div class="movie-card" ref="card">
+  <div class="movie-card">
     <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" alt="Movie Poster" class="movie-poster" />
     <div class="movie-info">
-      <h3 class="movie-title-wrapper">
-        <span
-            class="movie-title"
-            ref="title"
-            :class="{ 'scrollable': isTitleOverflow }"
-        >
-          {{ movie.title }}
-        </span>
-      </h3>
-      <p>{{ movie.overview.slice(0, 50) }}...</p>
+      <h3 class="movie-title">{{ movie.title }}</h3>
+      <p class="movie-overview">{{ movie.overview }}</p>
       <p><strong>개봉일:</strong> {{ movie.release_date }}</p>
       <p><strong>평점:</strong> {{ movie.vote_average }}</p>
     </div>
@@ -19,146 +11,66 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
 import { defineProps } from 'vue'
 
 const props = defineProps({
   movie: Object
 })
-
-const isTitleOverflow = ref(false)
-const card = ref(null)
-const title = ref(null)
-
-// 약간의 여유를 추가하여 스크롤 조건을 설정
-const checkTitleOverflow = () => {
-  if (title.value && card.value) {
-    const titleWidth = title.value.scrollWidth
-    const cardWidth = card.value.clientWidth
-    isTitleOverflow.value = titleWidth > cardWidth + 10
-  }
-}
-
-onMounted(() => {
-  checkTitleOverflow()
-  window.addEventListener('resize', checkTitleOverflow)
-})
-
-const description = ref(null)
-const isDescriptionOverflow = ref(false)
-
-const checkDescriptionOverflow = () => {
-  if (description.value && card.value) {
-    const descriptionWidth = description.value.scrollWidth
-    const cardWidth = card.value.clientWidth
-    isDescriptionOverflow.value = descriptionWidth > cardWidth + 10
-  }
-}
-
-onMounted(() => {
-  checkDescriptionOverflow()
-  window.addEventListener('resize', checkDescriptionOverflow)
-})
-
-
 </script>
 
-<style scoped>
-
-.movie-card-wrapper {
-  position: relative;
-  overflow: visible; /* 카드가 바깥으로 커질 수 있도록 래퍼에 설정 */
-  display: inline-block;
-}
-
-.movie-card {
-  min-width: 200px;
-  max-width: 220px;
+<style scoped>.movie-card {
+  width: 220px; /* 카드 폭을 더 크게 조정 */
+  height: 450px; /* 카드 높이도 증가 */
   background-color: #444;
   border-radius: 8px;
-  overflow: hidden; /* 카드 내부 요소들은 카드 안에 있어야 함 */
+  overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.movie-card-wrapper:hover .movie-card {
-  transform: scale(1.1); /* 호버 시 카드가 커짐 */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-  z-index: 10; /* 상위에 위치 */
+  transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: start; /* 스크롤 스냅이 카드별로 작동하도록 설정 */
 }
 
 .movie-card:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  transform: scale(1.05);
 }
-
 
 .movie-poster {
   width: 100%;
-  height: auto;
+  height: 65%; /* 포스터 이미지 비율 조정 */
+  object-fit: cover;
 }
 
 .movie-info {
   padding: 10px;
   color: #eee;
-  height: 180px; /* 고정된 높이 설정 */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 160px; /* 설명 박스의 최소 높이 설정 */
-}
-
-.movie-info p {
-  font-size: 0.85rem;
-  color: #bbb;
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* 최대 3줄로 제한 */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.movie-info p.scrollable:hover {
-  animation: scrollDescription 5s linear infinite;
-}
-
-@keyframes scrollDescription {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(calc(-100% + 160px)); /* 카드 너비보다 긴 경우에 왼쪽으로 이동 */
-  }
-}
-
-.movie-title-wrapper {
-  overflow: hidden;
-  white-space: nowrap;
-  position: relative;
-  margin-bottom: 8px; /* 제목과 설명 사이에 여백 추가 */
+  height: 35%; /* 정보 영역 비율 조정 */
 }
 
 .movie-title {
-  display: inline-block;
+  font-size: 1.1rem; /* 제목 크기 약간 증가 */
+  margin-bottom: 5px;
   white-space: nowrap;
-  transition: transform 5s linear;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.movie-title.scrollable:hover {
-  animation: scrollTitle 5s linear infinite;
+.movie-overview {
+  font-size: 0.9rem;
+  color: #bbb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 10px;
 }
-
-@keyframes scrollTitle {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(calc(-100% + 220px));
-  }
-}
-
 
 .movie-info p {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #bbb;
+  margin: 0;
 }
+
 </style>
