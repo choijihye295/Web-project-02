@@ -35,32 +35,63 @@ const checkTitleOverflow = () => {
   if (title.value && card.value) {
     const titleWidth = title.value.scrollWidth
     const cardWidth = card.value.clientWidth
-    // 카드 너비보다 제목 너비가 10px 이상 클 경우에만 스크롤 애니메이션 적용
     isTitleOverflow.value = titleWidth > cardWidth + 10
   }
 }
 
-onMounted(async () => {
-  await nextTick() // DOM 업데이트 후 너비를 계산할 수 있도록 nextTick 사용
+onMounted(() => {
   checkTitleOverflow()
-  window.addEventListener('resize', checkTitleOverflow) // 창 크기 변경 시 다시 계산
+  window.addEventListener('resize', checkTitleOverflow)
 })
+
+const description = ref(null)
+const isDescriptionOverflow = ref(false)
+
+const checkDescriptionOverflow = () => {
+  if (description.value && card.value) {
+    const descriptionWidth = description.value.scrollWidth
+    const cardWidth = card.value.clientWidth
+    isDescriptionOverflow.value = descriptionWidth > cardWidth + 10
+  }
+}
+
+onMounted(() => {
+  checkDescriptionOverflow()
+  window.addEventListener('resize', checkDescriptionOverflow)
+})
+
+
 </script>
 
 <style scoped>
+
+.movie-card-wrapper {
+  position: relative;
+  overflow: visible; /* 카드가 바깥으로 커질 수 있도록 래퍼에 설정 */
+  display: inline-block;
+}
+
 .movie-card {
   min-width: 200px;
   max-width: 220px;
   background-color: #444;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: hidden; /* 카드 내부 요소들은 카드 안에 있어야 함 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.movie-card-wrapper:hover .movie-card {
+  transform: scale(1.1); /* 호버 시 카드가 커짐 */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  z-index: 10; /* 상위에 위치 */
 }
 
 .movie-card:hover {
-  transform: scale(1.05);
+  transform: scale(1.1);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
 }
+
 
 .movie-poster {
   width: 100%;
@@ -70,12 +101,40 @@ onMounted(async () => {
 .movie-info {
   padding: 10px;
   color: #eee;
+  height: 180px; /* 고정된 높이 설정 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px; /* 설명 박스의 최소 높이 설정 */
+}
+
+.movie-info p {
+  font-size: 0.85rem;
+  color: #bbb;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* 최대 3줄로 제한 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.movie-info p.scrollable:hover {
+  animation: scrollDescription 5s linear infinite;
+}
+
+@keyframes scrollDescription {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-100% + 160px)); /* 카드 너비보다 긴 경우에 왼쪽으로 이동 */
+  }
 }
 
 .movie-title-wrapper {
   overflow: hidden;
   white-space: nowrap;
   position: relative;
+  margin-bottom: 8px; /* 제목과 설명 사이에 여백 추가 */
 }
 
 .movie-title {
@@ -93,9 +152,10 @@ onMounted(async () => {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(calc(-100% + 220px)); /* 카드 너비보다 긴 경우에 왼쪽으로 이동 */
+    transform: translateX(calc(-100% + 220px));
   }
 }
+
 
 .movie-info p {
   font-size: 0.85rem;

@@ -66,14 +66,18 @@ const fetchMovies = async () => {
   }
 }
 
+
+
 onMounted(fetchMovies)
 </script>
 
 <style scoped>
 .home {
-  padding: 20px;
+  padding: 0;
+  margin: 0;
   color: white;
   background-color: #333;
+  width: 100%;
 }
 
 .nav {
@@ -82,6 +86,20 @@ onMounted(fetchMovies)
   margin-bottom: 20px;
   font-size: 1.2rem;
   color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px 0;
+  margin: 0 auto;
+  z-index: 10;
+  transition: background-color 0.3s;
+  max-width: 100%;
+}
+
+.scrolled .nav {
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .banner {
