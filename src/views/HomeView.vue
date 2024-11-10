@@ -44,39 +44,38 @@
     </main>
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import MovieCard from '@/components/MovieCard.vue'
 
+// TMDB API KEY
 const TMDB_API_KEY = process.env.VUE_APP_TMDB_API_KEY
 
+// 상태 관리
 const bannerMovie = ref(null)
 const popularMovies = ref([])
 const latestMovies = ref([])
 const actionMovies = ref([])
-
 const movieSections = ref({})
+
+// 로컬 저장소에서 userId 가져오기
+const userId = ref(localStorage.getItem("registeredEmail") || "Guest")
+
+// 로그아웃 함수
+const logout = () => {
+  localStorage.removeItem("registeredEmail")
+  userId.value = "Guest" // userId 값을 초기 상태로 설정
+  isDropdownOpen.value = false
+}
+
+// 드롭다운 메뉴 상태 관리
 const isDropdownOpen = ref(false)
-
-// 사용자 아이디를 로컬 저장소에서 가져오기
-// userId 값을 localStorage에서 불러올 때 registeredEmail 키를 사용
-const userId = localStorage.getItem("registeredEmail") || "Guest";
-
-
-// 드롭다운 토글 함수
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value
 }
 
-// 로그아웃 함수
-const logout = () => {
-  localStorage.removeItem('userId') // 로컬 저장소에서 사용자 아이디 삭제
-  userId.value = 'Guest' // 로그아웃 후 기본값으로 설정
-  isDropdownOpen.value = false // 드롭다운 닫기
-}
-
+// 영화 데이터 가져오기 함수
 const fetchMovies = async () => {
   try {
     const bannerResponse = await axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&language=ko-KR&page=1`)
@@ -103,6 +102,7 @@ const fetchMovies = async () => {
 
 onMounted(fetchMovies)
 </script>
+
 
 <style scoped>
 /* 전체 페이지 배경과 마진을 없앰 */
