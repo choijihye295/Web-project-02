@@ -2,24 +2,29 @@
   <div class="app-container">
     <!-- 헤더 섹션 -->
     <header class="app-header">
-      <div class="logo">
-        <router-link to="/">
-          <font-awesome-icon icon="ticket-alt" class="icon" />
-        </router-link>
-      </div>
-      <nav class="nav-links">
-        <router-link to="/">홈</router-link>
-        <router-link to="/popular">대세 콘텐츠</router-link>
-        <router-link to="/search">찾아보기</router-link>
-        <router-link to="/wishlist">내가 찜한 리스트</router-link>
-      </nav>
-      <div class="user-icon" @click="toggleDropdown">
-        <font-awesome-icon icon="user" />
-      </div>
-      <!-- 간단한 드롭다운 메뉴 -->
-      <div v-if="isDropdownOpen" class="dropdown-menu">
-        <p>{{ userId }}</p>
-        <button @click="logout">로그아웃</button>
+      <div class="header-content">
+        <div class="logo">
+          <router-link to="/">
+            <font-awesome-icon icon="ticket-alt" class="icon" />
+          </router-link>
+        </div>
+        <nav class="nav-links">
+          <router-link to="/">홈</router-link>
+          <router-link to="/popular">대세 콘텐츠</router-link>
+          <router-link to="/search">찾아보기</router-link>
+          <router-link to="/wishlist">내가 찜한 리스트</router-link>
+        </nav>
+        <!-- 사용자 아이콘을 오른쪽으로 이동 -->
+        <div class="user-icon-container">
+          <div class="user-icon" @click="toggleDropdown">
+            <font-awesome-icon icon="user" />
+          </div>
+          <!-- 드롭다운 메뉴 -->
+          <div v-if="isDropdownOpen" class="dropdown-menu">
+            <p>{{ userId }}</p>
+            <button @click="logout">로그아웃</button>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -44,6 +49,10 @@
     </main>
   </div>
 </template>
+
+
+
+
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
@@ -117,22 +126,41 @@ body {
   overflow-x: hidden;
 }
 
+.app-container {
+  margin: 0 50px; /* 좌우 마진 추가 */
+}
+
 /* 헤더 스타일 */
 .app-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   position: fixed;
   top: 0;
-  width: 100%;
-  padding: 10px 20px;
-  background-color: rgba(26, 26, 26, 0.8); /* 초기 투명도 */
+  left: 0;
+  right: 0;
+  width: 100vw; /* 뷰포트 너비에 맞추어 고정 */
+  padding: 10px 0;
+  background-color: rgba(26, 26, 26, 0.85); /* 기본 투명도 설정 */
   color: white;
   z-index: 1000;
-  transition: background-color 0.3s ease; /* 애니메이션 효과 */
+  transition: background-color 0.3s ease; /* 투명도 애니메이션 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 약간의 그림자 추가 */
 }
-.app-header.scrolled {
-  background-color: rgba(26, 26, 26, 0.3); /* 스크롤 시 더 연한 배경 */
+.scrolled .app-header {
+  background-color: rgba(26, 26, 26, 0.5); /* 스크롤 시 투명도 낮춤 */
+}
+
+/* 헤더 안쪽의 컨텐츠를 중앙에 배치 */
+.header-content {
+  width: 100%;
+  max-width: 1200px; /* 최대 너비 설정 */
+  margin: 0 auto; /* 양쪽 여백 자동으로 설정 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px; /* 좌우 여백 */
+  box-sizing: border-box;
 }
 
 .nav-links a {
@@ -162,15 +190,25 @@ body {
   padding-top: 60px; /* 고정된 헤더의 높이만큼 여백 추가 */
 }
 
+.user-icon {
+  color: white;
+  cursor: pointer;
+  position: relative; /* 드롭다운 메뉴 위치를 설정하기 위해 상대 위치 */
+}
+
 .dropdown-menu {
   position: absolute;
-  top: 60px;
-  right: 20px;
-  background-color: #333;
-  color: white;
+  top: 100%; /* 사용자 아이콘 바로 아래에 위치 */
+  right: 0; /* 사용자 아이콘에 맞춰 정렬 */
+  background-color: #333; /* 드롭다운 배경색 */
   padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 추가 */
   border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  color: white;
+  margin-top: 5px; /* 사용자 아이콘과의 간격 */
+  min-width: 100px; /* 최소 너비 설정 */
+  text-align: center;
 }
 
 .dropdown-menu p {
@@ -179,15 +217,20 @@ body {
 }
 
 .dropdown-menu button {
-  margin-top: 10px;
-  padding: 5px 10px;
   background-color: #e50914;
   border: none;
   color: white;
+  padding: 5px 10px;
   cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
   border-radius: 3px;
 }
 
+.dropdown-menu button:hover {
+  background-color: #d40813;
+}
 /* 배너 스타일 */
 .banner {
   height: 400px;
