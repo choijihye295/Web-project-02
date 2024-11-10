@@ -1,30 +1,42 @@
 <template>
-  <div class="home">
-    <!-- 네비게이션 바 -->
-    <nav class="nav">
-      <span>홈</span>
-      <span>대세 콘텐츠</span>
-      <span>찾아보기</span>
-      <span>내가 찜한 리스트</span>
-    </nav>
-
-    <!-- 영화 배너 섹션 -->
-    <section v-if="bannerMovie" class="banner" :style="{ backgroundImage: `url(https://image.tmdb.org/t/p/original${bannerMovie.backdrop_path})` }">
-      <div class="banner-content">
-        <h1>{{ bannerMovie.title }}</h1>
-        <p>{{ bannerMovie.overview.slice(0, 100) }}...</p>
-        <button>재생</button>
-        <button>상세 정보</button>
+  <div class="app-container">
+    <!-- 헤더 섹션 -->
+    <header class="app-header">
+      <div class="logo">
+        <a @click="navigateToHome">
+          <font-awesome-icon icon="ticket-alt" class="icon" />
+        </a>
       </div>
-    </section>
-
-    <!-- 영화 섹션 (인기 영화, 최신 영화, 액션 영화) -->
-    <section v-for="(movies, title) in movieSections" :key="title" class="movie-section">
-      <h2>{{ title }}</h2>
-      <div class="movie-list">
-        <MovieCard v-for="movie in movies" :key="movie.id" :movie="movie" />
+      <nav class="nav-links">
+        <span>홈</span>
+        <span>대세 콘텐츠</span>
+        <span>찾아보기</span>
+        <span>내가 찜한 리스트</span>
+      </nav>
+      <div class="user-icon">
+        <font-awesome-icon icon="user" />
       </div>
-    </section>
+    </header>
+
+    <!-- 메인 콘텐츠 섹션 -->
+    <main class="main-content">
+      <!-- 영화 배너와 섹션 콘텐츠 -->
+      <section v-if="bannerMovie" class="banner" :style="{ backgroundImage: `url(https://image.tmdb.org/t/p/original${bannerMovie.backdrop_path})` }">
+        <div class="banner-content">
+          <h1>{{ bannerMovie.title }}</h1>
+          <p>{{ bannerMovie.overview.slice(0, 100) }}...</p>
+          <button>재생</button>
+          <button>상세 정보</button>
+        </div>
+      </section>
+
+      <section v-for="(movies, title) in movieSections" :key="title" class="movie-section">
+        <h2>{{ title }}</h2>
+        <div class="movie-list">
+          <MovieCard v-for="movie in movies" :key="movie.id" :movie="movie" />
+        </div>
+      </section>
+    </main>
   </div>
 </template>
 
@@ -66,42 +78,67 @@ const fetchMovies = async () => {
   }
 }
 
-
-
 onMounted(fetchMovies)
 </script>
 
+
 <style scoped>
-.home {
-  padding: 0;
+/* 전체 페이지 배경과 마진을 없앰 */
+* {
   margin: 0;
-  color: white;
-  background-color: #333;
-  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.nav {
+body {
+  background-color: #333;
+  overflow-x: hidden;
+}
+
+/* 헤더 스타일 */
+.app-header {
   display: flex;
-  justify-content: space-around;
-  margin-bottom: 20px;
-  font-size: 1.2rem;
-  color: white;
+  justify-content: space-between;
+  align-items: center;
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  padding: 10px 0;
-  margin: 0 auto;
-  z-index: 10;
-  transition: background-color 0.3s;
-  max-width: 100%;
+  width: 100%;
+  padding: 10px 20px;
+  background-color: #1a1a1a;
+  color: white;
+  z-index: 1000;
 }
 
-.scrolled .nav {
-  background-color: rgba(0, 0, 0, 0.6);
+.logo .icon {
+  color: #E50914;
+  font-size: 1.8rem;
 }
 
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links span {
+  cursor: pointer;
+  color: #e5e5e5;
+  transition: color 0.3s;
+}
+
+.nav-links span:hover {
+  color: #ffffff;
+}
+
+.user-icon {
+  color: white;
+  cursor: pointer;
+}
+
+.main-content {
+  padding-top: 60px; /* 고정된 헤더의 높이만큼 여백 추가 */
+}
+
+/* 배너 스타일 */
 .banner {
   height: 400px;
   display: flex;
@@ -137,6 +174,7 @@ onMounted(fetchMovies)
   cursor: pointer;
 }
 
+/* 영화 섹션 스타일 */
 .movie-section {
   margin-top: 20px;
 }
@@ -150,24 +188,20 @@ onMounted(fetchMovies)
 .movie-list {
   display: flex;
   gap: 20px;
-  overflow-x: scroll; /* 스크롤을 항상 보여줍니다 */
-  overflow-y: hidden; /* 세로 스크롤 숨기기 */
+  overflow-x: scroll;
   padding-bottom: 10px;
-  white-space: nowrap;
-  scroll-snap-type: x mandatory; /* 스크롤 스냅을 추가 */
 }
 
 .movie-list::-webkit-scrollbar {
-  height: 8px; /* 스크롤바 높이를 조정 */
+  height: 8px;
 }
 
 .movie-list::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.3); /* 스크롤바 색상 조정 */
+  background-color: rgba(255, 255, 255, 0.3);
   border-radius: 4px;
 }
 
 .movie-list::-webkit-scrollbar-track {
-  background-color: rgba(0, 0, 0, 0.1); /* 스크롤 트랙 색상 조정 */
+  background-color: rgba(0, 0, 0, 0.1);
 }
-
 </style>
