@@ -188,6 +188,7 @@ body {
 
 .main-content {
   padding-top: 60px; /* 고정된 헤더의 높이만큼 여백 추가 */
+  padding-bottom: 60px; /* 아래쪽 여백 추가 */
 }
 
 .user-icon {
