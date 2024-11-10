@@ -11,6 +11,9 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 // 라이브러리에 아이콘 추가
 library.add(fas)
 
+// 전역 스타일 불러오기
+import './assets/main.css' // 여백 제거와 배경색 설정
+
 // 앱 생성 및 Font Awesome 컴포넌트 등록
 const app = createApp(App)
 app.use(store)
