@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 import MovieCard from '@/components/MovieCard.vue';
 import HeaderComponent from "@/components/HeaderComponent.vue";
@@ -45,13 +45,9 @@ const isLoading = ref(false);
 const showTopButton = ref(false);
 const TMDB_API_KEY = process.env.VUE_APP_TMDB_API_KEY;
 
-const calculateItemsPerPage = () => {
-  const containerWidth = document.body.clientWidth;
-  return Math.floor(containerWidth / 200) * 3;
-};
+const itemsPerPage = ref(20); // 페이지당 영화 개수 설정 (화면 크기 기준으로 조정 가능)
 
-const itemsPerPage = ref(calculateItemsPerPage());
-
+// Table View: 페이지네이션에 맞춰 데이터 로드
 const loadMoviesForPage = async (page) => {
   isLoading.value = true;
   const response = await axios.get(`https://api.themoviedb.org/3/movie/popular`, {
@@ -61,14 +57,15 @@ const loadMoviesForPage = async (page) => {
       page,
     },
   });
-  paginatedMovies.value = response.data.results.slice(0, itemsPerPage.value);
-  totalPages.value = Math.ceil(response.data.total_results / itemsPerPage.value);
+  paginatedMovies.value = response.data.results;
+  totalPages.value = response.data.total_pages;
   currentPage.value = page;
   isLoading.value = false;
 };
 
+// Infinite Scroll: 스크롤 시 데이터 추가 로드
 const loadMoreMovies = async () => {
-  if (isLoading.value) return; // 이미 로딩 중인 경우 중복 호출 방지
+  if (isLoading.value) return;
   isLoading.value = true;
   const response = await axios.get(`https://api.themoviedb.org/3/movie/popular`, {
     params: {
@@ -77,32 +74,40 @@ const loadMoreMovies = async () => {
       page: currentPage.value + 1,
     },
   });
-  movies.value.push(...response.data.results); // 기존 영화 목록에 추가
+  movies.value.push(...response.data.results);
   currentPage.value += 1;
   isLoading.value = false;
 };
 
 // 스크롤 이벤트 핸들러 (무한 스크롤 시 로드 트리거)
 const handleScroll = (event) => {
-  const { scrollTop, clientHeight, scrollHeight } = event.target;
-  showTopButton.value = scrollTop > 300;
-  if (scrollTop + clientHeight >= scrollHeight - 5 && !isLoading.value) {
+  const container = event.target;
+  if (container.scrollTop + container.clientHeight >= container.scrollHeight - 5 && !isLoading.value) {
     loadMoreMovies();
   }
+  showTopButton.value = container.scrollTop > 300;
 };
 
 // 페이지 초기화 시 첫 데이터 로드
 onMounted(() => {
-  if (currentView.value === 'table') {
-    loadMoviesForPage(1);
-  } else {
-    loadMoreMovies(); // 무한 스크롤 뷰 초기 로드
-  }
-  window.addEventListener('resize', () => {
-    itemsPerPage.value = calculateItemsPerPage();
-  });
+  loadMoviesForPage(1);
 });
 
+// 화면이 Table 뷰로 바뀌면 페이지 로드
+const setView = (view) => {
+  currentView.value = view;
+  if (view === 'table') {
+    loadMoviesForPage(1);
+    document.body.style.overflowY = 'hidden'; // 스크롤 비활성화
+  } else {
+    movies.value = []; // Infinite Scroll 뷰를 위한 초기화
+    currentPage.value = 1;
+    loadMoreMovies();
+    document.body.style.overflowY = 'auto';
+  }
+};
+
+// 페이지네이션 함수
 const prevPage = () => {
   if (currentPage.value > 1) loadMoviesForPage(currentPage.value - 1);
 };
@@ -111,20 +116,10 @@ const nextPage = () => {
   if (currentPage.value < totalPages.value) loadMoviesForPage(currentPage.value + 1);
 };
 
+// Top 버튼 클릭 시 맨 위로 이동
 const scrollToTop = () => {
   const container = document.querySelector('.infinite-view');
   container.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-const setView = (view) => {
-  currentView.value = view;
-  if (view === 'table') {
-    loadMoviesForPage(1);
-    document.body.style.overflowY = 'hidden';
-  } else {
-    document.body.style.overflowY = 'auto';
-    loadMoreMovies(); // 무한 스크롤 뷰 선택 시 초기 데이터 로드
-  }
 };
 </script>
 
@@ -184,11 +179,8 @@ const setView = (view) => {
   border-radius: 50%;
 }
 
-.table-view {
-  overflow: hidden;
-}
-
 .infinite-view {
   overflow-y: auto;
+  height: calc(100vh - 150px);
 }
 </style>
