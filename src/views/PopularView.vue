@@ -25,7 +25,9 @@
         <MovieCard v-for="movie in movies" :key="movie.id" :movie="movie" />
       </div>
       <div v-if="isLoading" class="loading">Loading...</div>
-      <button v-if="showTopButton" @click="scrollToTop" class="top-button">Top</button>
+      <button v-if="showTopButton" @click="scrollToTop" class="top-button">
+        <i class="fas fa-chevron-up"></i>
+      </button>
     </div>
   </div>
 </template>
@@ -169,14 +171,19 @@ const scrollToTop = () => {
 
 .top-button {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 100px; /* 하늘색 네모 박스에 맞춰 조정 */
+  right: 60px;
   background-color: #e50914;
   color: white;
   border: none;
-  padding: 10px;
+  padding: 1px;
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: 10%;
+  z-index: 1000;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  font-size: 20px; /* 아이콘 크기 조정 */
 }
 
 .infinite-view {
