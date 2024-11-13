@@ -168,9 +168,38 @@ const scrollToTop = () => {
 .pagination {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 10px;
   margin-top: 20px;
 }
+
+.pagination button,
+.pagination span {
+  background-color: #333;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination button:hover {
+  background-color: #e50914; /* 버튼 호버 시 색상 */
+}
+
+.pagination span {
+  background-color: transparent;
+  color: #e50914; /* 현재 페이지 번호 색상 */
+  cursor: default;
+}
+
+.pagination button:disabled {
+  background-color: #666;
+  cursor: not-allowed;
+}
+
 
 .loading {
   text-align: center;
