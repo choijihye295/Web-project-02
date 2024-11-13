@@ -1,8 +1,8 @@
 <template>
-  <div class="popular-view">
+  <div class="popular-container">
     <HeaderComponent />
-    <!-- 상단 버튼 -->
-    <div class="view-options">
+    <!-- View 선택 버튼 -->
+    <div class="view-toggle">
       <button @click="setView('table')" :class="{ active: currentView === 'table' }">Table View</button>
       <button @click="setView('infinite')" :class="{ active: currentView === 'infinite' }">Infinite Scroll</button>
     </div>
@@ -36,7 +36,7 @@ import axios from 'axios';
 import MovieCard from '@/components/MovieCard.vue';
 import HeaderComponent from "@/components/HeaderComponent.vue";
 
-const currentView = ref('table'); // 현재 View 상태
+const currentView = ref('table');
 const movies = ref([]);
 const paginatedMovies = ref([]);
 const currentPage = ref(1);
@@ -45,15 +45,13 @@ const isLoading = ref(false);
 const showTopButton = ref(false);
 const TMDB_API_KEY = process.env.VUE_APP_TMDB_API_KEY;
 
-// View 변경 함수
-const setView = (view) => {
-  currentView.value = view;
-  if (view === 'table') {
-    loadMoviesForPage(1);
-  }
+const calculateItemsPerPage = () => {
+  const containerWidth = document.body.clientWidth;
+  return Math.floor(containerWidth / 200) * 3;
 };
 
-// Table View: 페이지네이션에 맞춰 데이터 로드
+const itemsPerPage = ref(calculateItemsPerPage());
+
 const loadMoviesForPage = async (page) => {
   isLoading.value = true;
   const response = await axios.get(`https://api.themoviedb.org/3/movie/popular`, {
@@ -63,13 +61,12 @@ const loadMoviesForPage = async (page) => {
       page,
     },
   });
-  paginatedMovies.value = response.data.results;
-  totalPages.value = response.data.total_pages;
+  paginatedMovies.value = response.data.results.slice(0, itemsPerPage.value);
+  totalPages.value = Math.ceil(response.data.results.length / itemsPerPage.value);
   currentPage.value = page;
   isLoading.value = false;
 };
 
-// Infinite Scroll: 스크롤 시 데이터 추가 로드
 const loadMoreMovies = async () => {
   isLoading.value = true;
   const response = await axios.get(`https://api.themoviedb.org/3/movie/popular`, {
@@ -84,7 +81,6 @@ const loadMoreMovies = async () => {
   isLoading.value = false;
 };
 
-// 스크롤 이벤트 핸들러 (무한 스크롤 시 로드 트리거)
 const handleScroll = (event) => {
   const { scrollTop, clientHeight, scrollHeight } = event.target;
   showTopButton.value = scrollTop > 300;
@@ -93,12 +89,13 @@ const handleScroll = (event) => {
   }
 };
 
-// 페이지 초기화 시 첫 데이터 로드
 onMounted(() => {
   loadMoviesForPage(1);
+  window.addEventListener('resize', () => {
+    itemsPerPage.value = calculateItemsPerPage();
+  });
 });
 
-// 페이지네이션 함수
 const prevPage = () => {
   if (currentPage.value > 1) loadMoviesForPage(currentPage.value - 1);
 };
@@ -107,40 +104,52 @@ const nextPage = () => {
   if (currentPage.value < totalPages.value) loadMoviesForPage(currentPage.value + 1);
 };
 
-// Top 버튼 클릭 시 맨 위로 이동
 const scrollToTop = () => {
   const container = document.querySelector('.infinite-view');
   container.scrollTo({ top: 0, behavior: 'smooth' });
 };
+
+const setView = (view) => {
+  currentView.value = view;
+  if (view === 'table') {
+    loadMoviesForPage(1);
+    document.body.style.overflowY = 'hidden';
+  } else {
+    document.body.style.overflowY = 'auto';
+  }
+};
 </script>
 
 <style scoped>
-.popular-view {
+.popular-container {
   padding: 20px;
 }
 
-.view-options {
+.view-toggle {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  justify-content: flex-end;
+  margin-top: 50px;
 }
 
-.view-options button {
-  padding: 10px 20px;
-  cursor: pointer;
-  border: none;
+.view-toggle button {
   background-color: #333;
   color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-left: 10px;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
-.view-options button.active {
+.view-toggle button.active {
   background-color: #e50914;
 }
 
 .movie-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 각 카드의 최소 너비를 200px로 설정 */
+  gap: 20px; /* 카드 사이의 간격 */
+  margin-top: 20px;
 }
 
 .pagination {
@@ -165,5 +174,13 @@ const scrollToTop = () => {
   padding: 10px;
   cursor: pointer;
   border-radius: 50%;
+}
+
+.table-view {
+  overflow: hidden;
+}
+
+.infinite-view {
+  overflow-y: auto;
 }
 </style>
