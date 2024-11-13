@@ -195,7 +195,15 @@ const scrollToTop = () => {
 }
 
 .infinite-view {
-  overflow-y: auto;
+  overflow-y: scroll; /* 스크롤 기능 유지 */
   height: calc(100vh - 150px);
+  scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
 }
+
+/* Webkit 기반 브라우저에서 스크롤바 완전히 숨기기 */
+.infinite-view::-webkit-scrollbar {
+  display: none;
+}
+
+
 </style>
