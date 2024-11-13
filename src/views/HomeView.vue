@@ -265,8 +265,6 @@ body {
   scroll-snap-type: x mandatory; /* 스크롤 스냅 기능 추가 */
   overscroll-behavior-x: contain; /* 가로 스크롤 중 세로 스크롤 간섭 방지 */
   touch-action: pan-x pan-y; /* 터치스크린 환경에서의 스크롤 개선 */
-
-
 }
 
 .movie-card {
