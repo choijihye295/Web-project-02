@@ -3,8 +3,12 @@
     <HeaderComponent />
     <!-- View 선택 버튼 -->
     <div class="view-toggle">
-      <button @click="setView('table')" :class="{ active: currentView === 'table' }">Table View</button>
-      <button @click="setView('infinite')" :class="{ active: currentView === 'infinite' }">Infinite Scroll</button>
+      <button @click="setView('table')" :class="{ active: currentView === 'table' }">
+        <font-awesome-icon :icon="faBorderAll" />
+      </button>
+      <button @click="setView('infinite')" :class="{ active: currentView === 'infinite' }">
+        <font-awesome-icon :icon="faBars" />
+      </button>
     </div>
 
     <!-- Table View -->
@@ -26,7 +30,7 @@
       </div>
       <div v-if="isLoading" class="loading">Loading...</div>
       <button v-if="showTopButton" @click="scrollToTop" class="top-button">
-        <i class="fas fa-chevron-up"></i>
+        <font-awesome-icon icon="chevron-up" />
       </button>
     </div>
   </div>
@@ -37,6 +41,10 @@ import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 import MovieCard from '@/components/MovieCard.vue';
 import HeaderComponent from "@/components/HeaderComponent.vue";
+
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faBorderAll, faBars, faChevronUp } from '@fortawesome/free-solid-svg-icons'
+
 
 const currentView = ref('table');
 const movies = ref([]);
