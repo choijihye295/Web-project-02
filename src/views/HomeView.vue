@@ -265,6 +265,14 @@ body {
   scroll-snap-type: x mandatory; /* 스크롤 스냅 기능 추가 */
   overscroll-behavior-x: contain; /* 가로 스크롤 중 세로 스크롤 간섭 방지 */
   touch-action: pan-x pan-y; /* 터치스크린 환경에서의 스크롤 개선 */
+
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer and Edge */
+
+  /* Chrome, Safari, and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .movie-card {
@@ -278,19 +286,20 @@ body {
   transition: transform 0.3s;
   display: flex;
   flex-direction: column;
+  scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
+  -ms-overflow-style: none; /* Internet Explorer에서 스크롤바 숨기기 */
 }
 
 .movie-list::-webkit-scrollbar {
-  height: 8px; /* 스크롤바 높이를 조정 */
+  display: none; /* Chrome, Safari, Opera에서 스크롤바 숨기기 */
 }
 
 .movie-list::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.3); /* 스크롤바 색상 */
-  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0); /* 스크롤바 핸들 투명 */
 }
 
 .movie-list::-webkit-scrollbar-track {
-  background-color: rgba(0, 0, 0, 0.1); /* 스크롤 트랙 색상 */
+  background-color: rgba(0, 0, 0, 0); /* 스크롤 트랙 투명 */
 }
 
 </style>
