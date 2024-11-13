@@ -7,6 +7,8 @@ import store from './store'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { fas } from '@fortawesome/free-solid-svg-icons'
+// main.js
+import '@fortawesome/fontawesome-free/css/all.css';
 
 // 라이브러리에 아이콘 추가
 library.add(fas)
