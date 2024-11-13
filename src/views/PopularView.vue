@@ -61,14 +61,14 @@ const loadMoviesForPage = async (page) => {
       page,
     },
   });
-  paginatedMovies.value = response.data.results;
-  totalPages.value = response.data.total_pages; // 전체 페이지 수를 API에서 직접 가져옴
+  paginatedMovies.value = response.data.results.slice(0, itemsPerPage.value);
+  totalPages.value = Math.ceil(response.data.total_results / itemsPerPage.value);
   currentPage.value = page;
   isLoading.value = false;
 };
 
-
 const loadMoreMovies = async () => {
+  if (isLoading.value) return; // 이미 로딩 중인 경우 중복 호출 방지
   isLoading.value = true;
   const response = await axios.get(`https://api.themoviedb.org/3/movie/popular`, {
     params: {
@@ -77,11 +77,12 @@ const loadMoreMovies = async () => {
       page: currentPage.value + 1,
     },
   });
-  movies.value.push(...response.data.results);
+  movies.value.push(...response.data.results); // 기존 영화 목록에 추가
   currentPage.value += 1;
   isLoading.value = false;
 };
 
+// 스크롤 이벤트 핸들러 (무한 스크롤 시 로드 트리거)
 const handleScroll = (event) => {
   const { scrollTop, clientHeight, scrollHeight } = event.target;
   showTopButton.value = scrollTop > 300;
@@ -90,8 +91,13 @@ const handleScroll = (event) => {
   }
 };
 
+// 페이지 초기화 시 첫 데이터 로드
 onMounted(() => {
-  loadMoviesForPage(1);
+  if (currentView.value === 'table') {
+    loadMoviesForPage(1);
+  } else {
+    loadMoreMovies(); // 무한 스크롤 뷰 초기 로드
+  }
   window.addEventListener('resize', () => {
     itemsPerPage.value = calculateItemsPerPage();
   });
@@ -117,6 +123,7 @@ const setView = (view) => {
     document.body.style.overflowY = 'hidden';
   } else {
     document.body.style.overflowY = 'auto';
+    loadMoreMovies(); // 무한 스크롤 뷰 선택 시 초기 데이터 로드
   }
 };
 </script>
@@ -148,8 +155,8 @@ const setView = (view) => {
 
 .movie-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 각 카드의 최소 너비를 200px로 설정 */
-  gap: 20px; /* 카드 사이의 간격 */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
   margin-top: 20px;
 }
 
