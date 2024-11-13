@@ -61,11 +61,12 @@ const loadMoviesForPage = async (page) => {
       page,
     },
   });
-  paginatedMovies.value = response.data.results.slice(0, itemsPerPage.value);
-  totalPages.value = Math.ceil(response.data.results.length / itemsPerPage.value);
+  paginatedMovies.value = response.data.results;
+  totalPages.value = response.data.total_pages; // 전체 페이지 수를 API에서 직접 가져옴
   currentPage.value = page;
   isLoading.value = false;
 };
+
 
 const loadMoreMovies = async () => {
   isLoading.value = true;
