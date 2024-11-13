@@ -1,5 +1,6 @@
 <template>
   <div class="popular-view">
+    <HeaderComponent />
     <!-- 상단 버튼 -->
     <div class="view-options">
       <button @click="setView('table')" :class="{ active: currentView === 'table' }">Table View</button>
@@ -33,6 +34,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import MovieCard from '@/components/MovieCard.vue';
+import HeaderComponent from "@/components/HeaderComponent.vue";
 
 const currentView = ref('table'); // 현재 View 상태
 const movies = ref([]);
