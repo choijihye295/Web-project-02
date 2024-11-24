@@ -130,7 +130,7 @@ onMounted(async () => {
 }
 /* 필터 컨테이너 스타일 */
 .filter-container {
-  margin-top: 20px; /* 헤더와의 여백 추가 */
+  margin-top: 40px; /* 헤더와의 여백 추가 */
   padding: 10px 20px; /* 좌우 여백 추가 */
   display: flex;
   justify-content: center; /* 버튼들을 가운데 정렬 */
