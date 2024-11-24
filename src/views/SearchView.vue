@@ -2,28 +2,34 @@
   <div class="search-container">
     <HeaderComponent />
     <!-- 필터 UI -->
-    <div class="filter-bar">
-      <select v-model="selectedGenre" @change="applyFilters">
-        <option value="">장르 (전체)</option>
-        <option v-for="genre in genres" :key="genre.id" :value="genre.id">
-          {{ genre.name }}
-        </option>
-      </select>
-
-      <select v-model="selectedRating" @change="applyFilters">
-        <option value="">평점 (전체)</option>
-        <option v-for="rating in ratings" :key="rating">{{ rating }}</option>
-      </select>
-
-      <select v-model="selectedSort" @change="applyFilters">
-        <option value="">정렬 (기본)</option>
-        <option value="popularity.desc">인기순</option>
-        <option value="release_date.desc">최신순</option>
-        <option value="vote_average.desc">평점순</option>
-      </select>
-
-      <button @click="resetFilters">초기화</button>
+    <div class="filter-container">
+      <div class="filter-bar">
+        <select v-model="selectedGenre" @change="applyFilters">
+          <option value="">장르 (전체)</option>
+          <option v-for="genre in genres" :key="genre.id" :value="genre.id">
+            {{ genre.name }}
+          </option>
+        </select>
+        <select v-model="selectedRating" @change="applyFilters">
+          <option value="">평점 (전체)</option>
+          <option value="9-10">9-10</option>
+          <option value="8-9">8-9</option>
+          <option value="7-8">7-8</option>
+          <option value="6-7">6-7</option>
+          <option value="5-6">5-6</option>
+          <option value="4-5">4-5</option>
+          <option value="0-4">4점 이하</option>
+        </select>
+        <select v-model="selectedSort" @change="applyFilters">
+          <option value="">정렬 (기본)</option>
+          <option value="popularity.desc">인기순</option>
+          <option value="release_date.desc">최신순</option>
+          <option value="vote_average.desc">평점순</option>
+        </select>
+        <button @click="resetFilters" class="reset-button">초기화</button>
+      </div>
     </div>
+
 
     <!-- 영화 리스트 -->
     <div class="movie-list" @scroll="handleScroll">
