@@ -182,6 +182,18 @@ onMounted(async () => {
 .loading {
   text-align: center;
   margin-top: 20px;
+  font-size: 1.2rem;
+  color: white;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* 헤더의 z-index 값 설정 */
