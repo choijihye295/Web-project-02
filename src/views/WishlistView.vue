@@ -1,68 +1,69 @@
 <template>
   <div class="wishlist-container">
     <HeaderComponent />
-    <h2>내가 찜한 리스트</h2>
-
-    <!-- 영화 리스트 -->
+    <h2 class="wishlist-title">내가 찜한 리스트</h2>
     <div class="movie-list" @scroll="handleScroll">
-      <div v-for="movie in paginatedMovies" :key="movie.id" class="movie-card">
+      <div v-for="movie in visibleMovies" :key="movie.id" class="movie-card">
         <MovieCard :movie="movie" />
       </div>
       <div v-if="isLoading" class="loading">Loading...</div>
     </div>
   </div>
 </template>
-
-<script setup>
-import {ref, onMounted} from 'vue';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { WishlistManager } from '@/utils/WishlistManager';
+import { Movie } from '@/types/movie';
 import HeaderComponent from '@/components/HeaderComponent.vue';
 import MovieCard from '@/components/MovieCard.vue';
 
+// 로컬 스토리지에서 사용자 ID 가져오기
+const user = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+if (!user.id) {
+  console.error('로그인 정보가 없습니다.');
+}
+const userId = user.id;
+
+// WishlistManager 초기화
+const wishlistManager = new WishlistManager(userId);
+
 // 상태 변수
-const wishlist = ref([]); // 로컬 스토리지에서 불러온 영화 데이터
-const paginatedMovies = ref([]); // 현재 페이지에서 보여줄 영화 데이터
-const page = ref(1); // 현재 페이지 번호
-const itemsPerPage = 20; // 한 번에 로드할 영화 개수
-const isLoading = ref(false); // 로딩 상태
+const wishlist = ref<Movie[]>([]);
+const visibleMovies = ref<Movie[]>([]);
+const isLoading = ref(false);
+const page = ref(1);
+const itemsPerPage = 20; // 한 번에 표시할 영화 개수
 
-// 로컬 스토리지에서 영화 불러오기
+// 찜한 목록 로드 및 초기화
 const loadWishlist = () => {
-  const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-  wishlist.value = storedWishlist;
-  paginateMovies(); // 첫 페이지 데이터 로드
+  wishlist.value = wishlistManager.getWishlist();
+  updateVisibleMovies();
 };
 
-// 현재 페이지의 영화 데이터 추가
-const paginateMovies = () => {
-  const startIndex = (page.value - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const moviesToAdd = wishlist.value.slice(startIndex, endIndex);
-
-  if (moviesToAdd.length) {
-    paginatedMovies.value.push(...moviesToAdd);
-  }
-  isLoading.value = false;
+// 무한 스크롤로 표시할 영화 업데이트
+const updateVisibleMovies = () => {
+  const start = (page.value - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  visibleMovies.value.push(...wishlist.value.slice(start, end));
 };
 
-// 무한 스크롤 이벤트 핸들러
-const handleScroll = (event) => {
-  const {scrollTop, clientHeight, scrollHeight} = event.target;
-
-  // 스크롤이 끝에 도달하면 추가 데이터 로드
-  if (scrollTop + clientHeight >= scrollHeight - 5 && !isLoading.value) {
+// 스크롤 핸들러
+const handleScroll = (event: Event) => {
+  const target = event.target as HTMLElement;
+  if (target.scrollTop + target.clientHeight >= target.scrollHeight - 5 && !isLoading.value) {
     if (page.value * itemsPerPage < wishlist.value.length) {
-      isLoading.value = true;
-      page.value += 1;
-      paginateMovies();
+      page.value++;
+      updateVisibleMovies();
     }
   }
 };
 
-// 컴포넌트가 마운트될 때 로컬 스토리지에서 데이터 로드
+// 컴포넌트 초기화
 onMounted(() => {
   loadWishlist();
 });
 </script>
+
 
 <style scoped>
 .wishlist-container {
@@ -72,7 +73,7 @@ onMounted(() => {
 }
 
 h2 {
-  margin-top: 40px; /* 헤더와 간격 추가 */
+  margin-top: 50px; /* 헤더와 간격 추가 */
   margin-bottom: 20px;
   font-size: 1.5rem;
 }
@@ -87,15 +88,13 @@ h2 {
   scrollbar-width: none; /* Firefox에서 스크롤바 숨김 */
 }
 
-/* Webkit 기반 브라우저에서 스크롤바 숨기기 */
 .movie-list::-webkit-scrollbar {
   display: none;
 }
 
 .loading {
   text-align: center;
-  padding: 10px;
   font-size: 1.2rem;
-  color: #bbb;
+  color: white;
 }
 </style>

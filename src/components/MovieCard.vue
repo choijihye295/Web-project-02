@@ -11,48 +11,46 @@
     />
     <div class="movie-info">
       <h3 class="movie-title">{{ movie.title }}</h3>
-      <p class="movie-overview">{{ movie.overview }}</p>
       <p><strong>개봉일:</strong> {{ movie.release_date }}</p>
       <p><strong>평점:</strong> {{ movie.vote_average }}</p>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { defineProps, ref, onMounted } from 'vue';
+import { WishlistManager } from '@/utils/WishlistManager';
+import { Movie } from '@/types/movie';
+
+// 로컬 스토리지에서 사용자 ID 가져오기
+const user = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
+if (!user.id) {
+  console.error('로그인 정보가 없습니다.');
+}
+const userId = user.id;
+
+// WishlistManager 초기화
+const wishlistManager = new WishlistManager(userId);
 
 // props 정의
-const props = defineProps({
-  movie: Object, // 부모 컴포넌트에서 전달받은 영화 데이터
-});
+const props = defineProps<{ movie: Movie }>();
 
-// 선택 여부 상태 관리
+// 상태 관리
 const isSelected = ref(false);
 
-// 로컬 저장소에서 초기 상태 확인
+// 초기 상태 설정
 onMounted(() => {
-  const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+  const wishlist = wishlistManager.getWishlist();
   isSelected.value = wishlist.some((item) => item.id === props.movie.id);
 });
 
-// 찜 리스트에 추가/제거 토글
+// 찜 상태 토글
 const toggleWishlist = () => {
-  const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-
-  if (isSelected.value) {
-    // 이미 선택된 경우, 찜 리스트에서 제거
-    const updatedWishlist = wishlist.filter((item) => item.id !== props.movie.id);
-    localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
-  } else {
-    // 선택되지 않은 경우, 찜 리스트에 추가
-    wishlist.push(props.movie);
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
-  }
-
-  // 상태 업데이트
+  wishlistManager.toggleWishlist(props.movie);
   isSelected.value = !isSelected.value;
 };
 </script>
+
 
 <style scoped>
 .movie-card {
@@ -65,7 +63,6 @@ const toggleWishlist = () => {
   transition: transform 0.3s, border 0.3s;
   display: flex;
   flex-direction: column;
-  scroll-snap-align: start; /* 스크롤 스냅 */
   cursor: pointer;
 }
 
@@ -74,44 +71,25 @@ const toggleWishlist = () => {
 }
 
 .movie-card.selected {
-  border: 3px solid white; /* 선택된 카드에 흰색 테두리 추가 */
+  border: 3px solid white;
 }
 
 .movie-poster {
   width: 100%;
-  height: 65%; /* 포스터 이미지 비율 조정 */
+  height: 65%;
   object-fit: cover;
 }
 
 .movie-info {
   padding: 10px;
   color: #eee;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 35%; /* 정보 영역 비율 조정 */
 }
 
 .movie-title {
-  font-size: 1.1rem; /* 제목 크기 증가 */
+  font-size: 1.1rem;
   margin-bottom: 5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.movie-overview {
-  font-size: 0.9rem;
-  color: #bbb;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 10px;
-}
-
-.movie-info p {
-  font-size: 0.9rem;
-  color: #bbb;
-  margin: 0;
 }
 </style>
