@@ -80,7 +80,6 @@ vue-movie-finder/
 │   │
 │   ├── router/                  # Vue Router 설정
 │   │   └── index.ts             # 라우터 정의
-
 │   ├── store/                   
 │   │   └── index.ts             
 │   │
