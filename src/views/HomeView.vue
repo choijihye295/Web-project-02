@@ -1,32 +1,7 @@
 <template>
   <div class="app-container">
     <!-- 헤더 섹션 -->
-    <header class="app-header">
-      <div class="header-content">
-        <div class="logo">
-          <router-link to="/">
-            <font-awesome-icon icon="ticket-alt" class="icon" />
-          </router-link>
-        </div>
-        <nav class="nav-links">
-          <router-link to="/">홈</router-link>
-          <router-link to="/popular">대세 콘텐츠</router-link>
-          <router-link to="/search">찾아보기</router-link>
-          <router-link to="/wishlist">내가 찜한 리스트</router-link>
-        </nav>
-        <!-- 사용자 아이콘을 오른쪽으로 이동 -->
-        <div class="user-icon-container">
-          <div class="user-icon" @click="toggleDropdown">
-            <font-awesome-icon icon="user" />
-          </div>
-          <!-- 드롭다운 메뉴 -->
-          <div v-if="isDropdownOpen" class="dropdown-menu">
-            <p>{{ userId }}</p>
-            <button @click="logout">로그아웃</button>
-          </div>
-        </div>
-      </div>
-    </header>
+    <HeaderComponent />
 
     <!-- 메인 콘텐츠 섹션 -->
     <main class="main-content">
@@ -57,6 +32,7 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import MovieCard from '@/components/MovieCard.vue'
+import HeaderComponent from "@/components/HeaderComponent.vue";
 
 // TMDB API KEY
 const TMDB_API_KEY = process.env.VUE_APP_TMDB_API_KEY
