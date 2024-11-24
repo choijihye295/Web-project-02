@@ -128,40 +128,48 @@ onMounted(async () => {
   padding: 20px;
   color: white;
 }
+/* 필터 컨테이너 스타일 */
+.filter-container {
+  margin-top: 20px; /* 헤더와의 여백 추가 */
+  padding: 10px 20px; /* 좌우 여백 추가 */
+  display: flex;
+  justify-content: center; /* 버튼들을 가운데 정렬 */
+}
 
-/* 드롭다운 메뉴 스타일 조정 */
+/* 필터 바 스타일 */
 .filter-bar {
-  position: relative;
-  z-index: 1010; /* 헤더보다 높은 z-index 설정 */
-  margin-top: 20px; /* 헤더와 약간의 간격 추가 */
+  display: flex;
+  gap: 10px; /* 버튼들 사이 간격 추가 */
+  flex-wrap: wrap; /* 버튼이 많아지면 줄 바꿈 */
 }
 
-.filter-bar select {
-  position: relative;
-  z-index: 1020; /* 드롭다운 선택 요소를 헤더보다 위에 배치 */
-  background-color: #444;
-  color: white;
-  border: none;
-  padding: 10px;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  appearance: none; /* 기본 드롭다운 화살표 제거 */
-}
-
-.filter-bar select:focus {
-  outline: none;
-  border: 1px solid #e50914; /* 선택된 상태 강조 */
-}
-
+/* 버튼 스타일 */
+.filter-bar select,
 .filter-bar button {
-  background-color: #e50914;
-  color: white;
-  border: none;
   padding: 10px 15px;
-  border-radius: 5px;
+  border: none;
+  border-radius: 20px; /* 둥근 버튼 스타일 */
+  background-color: #333; /* 버튼 배경색 */
+  color: white; /* 버튼 텍스트 색상 */
+  font-size: 14px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
+
+/* 버튼 호버 스타일 */
+.filter-bar select:hover,
+.filter-bar button:hover {
+  background-color: #e50914; /* 호버 시 빨간색 */
+  color: white;
+}
+
+/* 초기화 버튼 스타일 */
+.reset-button {
+  background-color: #e50914; /* 기본 배경색 */
+  color: white;
+  border-radius: 20px; /* 둥근 모서리 */
+}
+
 
 .movie-list {
   display: grid;
