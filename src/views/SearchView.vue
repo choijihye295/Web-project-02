@@ -122,22 +122,29 @@ onMounted(async () => {
   padding: 20px;
   color: white;
 }
-
-.filter-bar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.filter-bar select,
-.filter-bar button {
-  padding: 10px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
+/* 드롭다운 메뉴 스타일 조정 */
+.filter-bar select {
+  position: relative;
+  z-index: 1010; /* 헤더보다 높은 z-index 설정 */
   background-color: #444;
   color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
   cursor: pointer;
+  appearance: none; /* 기본 드롭다운 화살표 제거 */
+}
+
+.filter-bar {
+  position: relative;
+  z-index: 1010; /* 헤더보다 높은 z-index 설정 */
+}
+
+/* 드롭다운 선택 목록이 헤더에 가려지지 않도록 설정 */
+.filter-bar select:focus {
+  outline: none;
+  border: 1px solid #e50914; /* 선택된 상태 강조 */
 }
 
 .filter-bar button {
