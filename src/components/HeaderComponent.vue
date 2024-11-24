@@ -38,6 +38,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
 
 // 로컬 스토리지에서 사용자 ID 가져오기
 const userId = ref(localStorage.getItem("registeredEmail") || "Guest");
@@ -45,11 +46,12 @@ const isDropdownOpen = ref(false);
 const isScrolled = ref(false);
 const isSearchOpen = ref(false); // 검색창 상태
 const searchQuery = ref(""); // 검색어
+const router = useRouter();
 
 // 로그아웃 기능
 const logout = () => {
-  localStorage.removeItem("registeredEmail");
-  userId.value = "Guest";
+  // /signin 페이지로 이동
+  router.push("/signin");
   isDropdownOpen.value = false;
 };
 
