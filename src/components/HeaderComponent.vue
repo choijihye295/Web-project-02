@@ -20,9 +20,9 @@
             type="text"
             v-model="searchQuery"
             placeholder="영화 제목 검색"
-            @keyup.enter="performSearch"
+            @keyup.enter="saveSearch"
         />
-        <button @click="performSearch">검색</button>
+        <button @click="saveSearch">검색</button>
       </div>
       <div class="user-icon" @click="toggleDropdown">
         <font-awesome-icon icon="user" />
@@ -36,14 +36,10 @@
 </template>
 
 
-
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { useRouter } from "vue-router";
 
 // 로컬 스토리지에서 사용자 ID 가져오기
-
-const router = useRouter();
 const userId = ref(localStorage.getItem("registeredEmail") || "Guest");
 const isDropdownOpen = ref(false);
 const isScrolled = ref(false);
@@ -57,25 +53,15 @@ const logout = () => {
   isDropdownOpen.value = false;
 };
 
-// 검색창 토글
-const toggleSearch = () => {
-  isSearchOpen.value = !isSearchOpen.value;
-  if (!isSearchOpen.value) searchQuery.value = "";
-};
-
 // 드롭다운 메뉴 토글
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
 
-
-// 검색 수행
-const performSearch = () => {
-  if (searchQuery.value.trim()) {
-    router.push({ name: "SearchView", query: { q: searchQuery.value.trim() } });
-    searchQuery.value = "";
-    isSearchOpen.value = false;
-  }
+// 검색창 토글
+const toggleSearch = () => {
+  isSearchOpen.value = !isSearchOpen.value;
+  if (!isSearchOpen.value) searchQuery.value = ""; // 검색창 닫히면 입력 초기화
 };
 
 // 검색어 저장
