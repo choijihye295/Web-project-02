@@ -122,10 +122,17 @@ onMounted(async () => {
   padding: 20px;
   color: white;
 }
+
 /* 드롭다운 메뉴 스타일 조정 */
-.filter-bar select {
+.filter-bar {
   position: relative;
   z-index: 1010; /* 헤더보다 높은 z-index 설정 */
+  margin-top: 20px; /* 헤더와 약간의 간격 추가 */
+}
+
+.filter-bar select {
+  position: relative;
+  z-index: 1020; /* 드롭다운 선택 요소를 헤더보다 위에 배치 */
   background-color: #444;
   color: white;
   border: none;
@@ -136,12 +143,6 @@ onMounted(async () => {
   appearance: none; /* 기본 드롭다운 화살표 제거 */
 }
 
-.filter-bar {
-  position: relative;
-  z-index: 1010; /* 헤더보다 높은 z-index 설정 */
-}
-
-/* 드롭다운 선택 목록이 헤더에 가려지지 않도록 설정 */
 .filter-bar select:focus {
   outline: none;
   border: 1px solid #e50914; /* 선택된 상태 강조 */
@@ -149,6 +150,11 @@ onMounted(async () => {
 
 .filter-bar button {
   background-color: #e50914;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .movie-list {
@@ -156,11 +162,22 @@ onMounted(async () => {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
   overflow-y: auto;
-  height: calc(100vh - 150px);
+  height: calc(100vh - 200px); /* 필터와 컨텐츠의 여백 고려 */
 }
 
 .loading {
   text-align: center;
   margin-top: 20px;
 }
+
+/* 헤더의 z-index 값 설정 */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* 헤더의 z-index를 드롭다운보다 낮게 설정 */
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
 </style>
