@@ -175,9 +175,16 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
-  overflow-y: auto;
-  height: calc(100vh - 200px); /* 필터와 컨텐츠의 여백 고려 */
+  overflow-y: scroll; /* 스크롤 기능 활성화 */
+  height: calc(100vh - 200px); /* 헤더와 필터 컨테이너 여백 고려 */
+  scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
 }
+
+/* Webkit 기반 브라우저에서 스크롤바 완전히 숨기기 */
+.movie-list::-webkit-scrollbar {
+  display: none;
+}
+
 
 .loading {
   text-align: center;
