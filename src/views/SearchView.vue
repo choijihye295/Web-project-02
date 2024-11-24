@@ -118,6 +118,13 @@ const applyFilters = () => {
       if (selectedSort.value === 'vote_average.desc') return b.vote_average - a.vote_average;
     });
   }
+
+  // 필터링된 영화 수가 20개 미만인 경우 새 데이터를 로드
+  if (filteredMovies.value.length < 20 && !isLoading.value) {
+    page.value += 1;
+    fetchMovies();
+  }
+
 };
 
 // 필터 초기화
@@ -129,13 +136,19 @@ const resetFilters = () => {
 };
 
 // 무한 스크롤 로직
-const handleScroll = (event) => {
+const handleScroll = async (event) => {
   const { scrollTop, clientHeight, scrollHeight } = event.target;
-  if (scrollTop + clientHeight >= scrollHeight - 5 && !isLoading.value) {
+
+  // 스크롤이 끝에 도달하거나 영화 수가 20개 미만인 경우 새 데이터를 로드
+  if (
+      (scrollTop + clientHeight >= scrollHeight - 5 && !isLoading.value) ||
+      (filteredMovies.value.length < 10 && !isLoading.value)
+  ) {
     page.value += 1;
-    fetchMovies();
+    await fetchMovies();
   }
 };
+
 
 // 정렬 옵션 변경 시 자동 반영
 watch([selectedSort, selectedGenre, selectedRating], () => {
