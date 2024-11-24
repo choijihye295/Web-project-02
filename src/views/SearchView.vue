@@ -42,12 +42,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import axios from 'axios';
 import HeaderComponent from '@/components/HeaderComponent.vue';
 import MovieCard from '@/components/MovieCard.vue';
 
 const TMDB_API_KEY = process.env.VUE_APP_TMDB_API_KEY;
+
+// 상태 관리 변수
 const movies = ref([]);
 const filteredMovies = ref([]);
 const genres = ref([]);
@@ -59,8 +61,7 @@ const selectedGenre = ref('');
 const selectedRating = ref('');
 const selectedSort = ref('');
 
-const ratings = ['9-10', '8-9', '7-8', '6-7', '5-6', '4-5', '4점 이하'];
-
+// 장르 데이터 가져오기
 const fetchGenres = async () => {
   const response = await axios.get(`https://api.themoviedb.org/3/genre/movie/list`, {
     params: { api_key: TMDB_API_KEY, language: 'ko-KR' },
@@ -68,23 +69,31 @@ const fetchGenres = async () => {
   genres.value = response.data.genres;
 };
 
+// 영화 데이터 가져오기 (API 요청)
 const fetchMovies = async () => {
   isLoading.value = true;
-  const response = await axios.get(`https://api.themoviedb.org/3/discover/movie`, {
-    params: {
-      api_key: TMDB_API_KEY,
-      language: 'ko-KR',
-      page: page.value,
-      sort_by: selectedSort.value || 'popularity.desc',
-      with_genres: selectedGenre.value || '',
-    },
-  });
-  movies.value.push(...response.data.results);
-  filteredMovies.value = movies.value;
-  isLoading.value = false;
+  try {
+    const response = await axios.get(`https://api.themoviedb.org/3/discover/movie`, {
+      params: {
+        api_key: TMDB_API_KEY,
+        language: 'ko-KR',
+        page: page.value,
+        sort_by: selectedSort.value || 'popularity.desc', // 정렬 조건
+        with_genres: selectedGenre.value || '', // 장르 필터
+      },
+    });
+    movies.value.push(...response.data.results);
+    applyFilters(); // 필터 및 정렬 반영
+  } catch (error) {
+    console.error('영화 데이터를 가져오는 중 오류 발생:', error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
+// 필터 및 정렬 적용
 const applyFilters = () => {
+  // 필터 로직
   filteredMovies.value = movies.value.filter((movie) => {
     const meetsGenre =
         !selectedGenre.value || movie.genre_ids.includes(Number(selectedGenre.value));
@@ -100,15 +109,26 @@ const applyFilters = () => {
 
     return meetsGenre && meetsRating;
   });
+
+  // 정렬 로직
+  if (selectedSort.value) {
+    filteredMovies.value.sort((a, b) => {
+      if (selectedSort.value === 'popularity.desc') return b.popularity - a.popularity;
+      if (selectedSort.value === 'release_date.desc') return new Date(b.release_date) - new Date(a.release_date);
+      if (selectedSort.value === 'vote_average.desc') return b.vote_average - a.vote_average;
+    });
+  }
 };
 
+// 필터 초기화
 const resetFilters = () => {
   selectedGenre.value = '';
   selectedRating.value = '';
   selectedSort.value = '';
-  filteredMovies.value = movies.value;
+  filteredMovies.value = movies.value; // 초기 데이터로 재설정
 };
 
+// 무한 스크롤 로직
 const handleScroll = (event) => {
   const { scrollTop, clientHeight, scrollHeight } = event.target;
   if (scrollTop + clientHeight >= scrollHeight - 5 && !isLoading.value) {
@@ -117,11 +137,18 @@ const handleScroll = (event) => {
   }
 };
 
+// 정렬 옵션 변경 시 자동 반영
+watch([selectedSort, selectedGenre, selectedRating], () => {
+  applyFilters();
+});
+
+// 페이지 로드 시 초기화
 onMounted(async () => {
   await fetchGenres();
   await fetchMovies();
 });
 </script>
+
 
 <style scoped>
 .search-container {
