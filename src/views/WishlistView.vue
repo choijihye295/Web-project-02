@@ -1,7 +1,7 @@
 <template>
   <div class="wishlist-container">
     <HeaderComponent />
-    <h2>내가 찜한 리스트</h2>
+    <h2 class="wishlist-title">내가 찜한 리스트</h2>
     <!-- 무한 스크롤 -->
     <div class="movie-list" @scroll="handleScroll">
       <div v-for="movie in paginatedMovies" :key="movie.id" class="movie-card">
@@ -63,12 +63,22 @@ onMounted(() => {
   color: white;
 }
 
+
+/* 제목 스타일 */
+.wishlist-title {
+  margin-top: 80px; /* 헤더와의 여백 추가 */
+  margin-bottom: 20px; /* 제목 아래 여백 */
+  text-align: center;
+  font-size: 2rem;
+}
+
+/* 영화 리스트 스타일 */
 .movie-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
   overflow-y: auto;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 150px); /* 헤더와 제목의 높이를 고려한 계산 */
   scrollbar-width: none;
 }
 
